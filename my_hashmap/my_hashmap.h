@@ -22,6 +22,11 @@
 #endif // _VEC_MACROS__
 
 #define hashmap_node(K, E) TOKENPASTE4(K, _, E, _hashmap_node)
+struct hashmap_node(K_TYPE, V_TYPE);
+
+#define hashmap(K, E) TOKENPASTE4(K, _, E, _hashmap)
+struct hashmap(K_TYPE, V_TYPE);
+
 struct hashmap_node(K_TYPE, V_TYPE) {
     K_TYPE key;
     V_TYPE value;
@@ -46,7 +51,6 @@ hashmap_node(K_TYPE, V_TYPE) *hashmap_node_new(K_TYPE, V_TYPE) () {
     return (hashmap_node(K_TYPE, V_TYPE) *) malloc(sizeof(hashmap_node(K_TYPE, V_TYPE)));
 }
 
-#define hashmap(K, E) TOKENPASTE4(K, _, E, _hashmap)
 struct hashmap(K_TYPE, V_TYPE) {
     size_t size;
     size_t capacity;
@@ -77,13 +81,13 @@ bool hashmap_init(K_TYPE, V_TYPE) (
 #define hashmap_free(K, E) TOKENPASTE4(K, _, E, _hashmap_free)
 void hashmap_free(K_TYPE, V_TYPE) (hashmap(K_TYPE, V_TYPE) *map);
 
-#define hashmap_hashmap_node_free(K, E) TOKENPASTE4(K, _, E, _hashmap_hashmap_node_free)
-void hashmap_hashmap_node_free(K_TYPE, V_TYPE) (
+#define hashmap_node_free(K, E) TOKENPASTE4(K, _, E, _hashmap_node_free)
+void hashmap_node_free(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *node);
 
-#define hashmap_hashmap_node_copy(K, E) TOKENPASTE4(K, _, E, _hashmap_hashmap_node_copy)
-void hashmap_hashmap_node_copy(K_TYPE, V_TYPE) (
+#define hashmap_node_copy(K, E) TOKENPASTE4(K, _, E, _hashmap_node_copy)
+void hashmap_node_copy(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *lhs,
         hashmap_node(K_TYPE, V_TYPE) *rhs);
@@ -168,7 +172,7 @@ void hashmap_free(K_TYPE, V_TYPE) (hashmap(K_TYPE, V_TYPE) *map) {
     if (map->buckets != NULL) {
         for (size_t i = 0; i < map->capacity; ++i)
             if (map->allocated_buckets[i])
-                hashmap_hashmap_node_free(K_TYPE, V_TYPE)(map, &map->buckets[i]);
+                hashmap_node_free(K_TYPE, V_TYPE)(map, &map->buckets[i]);
         free(map->buckets);
     }
     if (map->allocated_buckets != NULL) { 
@@ -176,12 +180,12 @@ void hashmap_free(K_TYPE, V_TYPE) (hashmap(K_TYPE, V_TYPE) *map) {
     }
 }
 
-void hashmap_hashmap_node_free(K_TYPE, V_TYPE) (
+void hashmap_node_free(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *node
 ) {
     if (node->next != NULL) {
-        hashmap_hashmap_node_free(K_TYPE, V_TYPE)(map, node->next);
+        hashmap_node_free(K_TYPE, V_TYPE)(map, node->next);
     }
     if (map->ptr_free_k != NULL) {
         printf("Freeing %s: %d\n", node->key.buffer, node->value);
@@ -191,7 +195,7 @@ void hashmap_hashmap_node_free(K_TYPE, V_TYPE) (
         map->ptr_free_v(&node->value);
 }
 
-void hashmap_hashmap_node_copy(K_TYPE, V_TYPE) (
+void hashmap_node_copy(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *lhs,
         hashmap_node(K_TYPE, V_TYPE) *rhs
@@ -311,7 +315,7 @@ bool hashmap_remove(K_TYPE, V_TYPE) (hashmap(K_TYPE, V_TYPE) *map, K_TYPE _key) 
     if (map->ptr_key_equals(_key, bucketptr->key)) {
         printf("removing first element.\n");
         memcpy(&map->buckets[bucket], map->buckets[bucket].next, sizeof(hashmap_node(K_TYPE, V_TYPE)));
-//        hashmap_hashmap_node_copy(string, int)(map, bucketptr, bucketptr->next);
+//        hashmap_node_copy(string, int)(map, bucketptr, bucketptr->next);
         map->size--;
         return true;
     }
@@ -319,7 +323,7 @@ bool hashmap_remove(K_TYPE, V_TYPE) (hashmap(K_TYPE, V_TYPE) *map, K_TYPE _key) 
     while (bucketptr->next != NULL) {
         if (map->ptr_key_equals(_key, bucketptr->next->key)) {
             hashmap_node(K_TYPE, V_TYPE) *temp = bucketptr->next->next;
-            hashmap_hashmap_node_free(K_TYPE, V_TYPE)(map, bucketptr->next);
+            hashmap_node_free(K_TYPE, V_TYPE)(map, bucketptr->next);
             bucketptr->next = temp;
             return true;
         }
