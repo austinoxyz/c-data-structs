@@ -1,6 +1,16 @@
+**/a.out
 **/core
-**/eval_preproc
+
 **/include/
 **/lib/
+
+**/eval_preproc
 **/test_build.sh
 **/.vimspector.json
+**/*.o
+
+my_string/my_string
+my_vector/my_vector
+my_hashmap/my_hashmap
+
+old/

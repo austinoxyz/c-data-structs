@@ -54,6 +54,8 @@ struct hashmap(K_TYPE, V_TYPE) {
     hashmap_node(K_TYPE, V_TYPE) *buckets;
     bool *allocated_buckets;
 
+    void (*ptr_init_k)(K_TYPE *_key);
+    void (*ptr_init_v)(V_TYPE *_value);
     void (*ptr_free_k)(K_TYPE *_key);
     void (*ptr_free_v)(V_TYPE *_value);
     void (*ptr_copy_k)(K_TYPE *lhs, K_TYPE *rhs);
@@ -137,6 +139,8 @@ bool hashmap_init(K_TYPE, V_TYPE) (
 
     map->ptr_hash = hash;
     map->ptr_key_equals = key_equals;
+    map->ptr_init_k = NULL;
+    map->ptr_init_v = NULL;
     map->ptr_free_k = NULL;
     map->ptr_free_v = NULL;
     map->ptr_copy_k = NULL;
@@ -176,8 +180,13 @@ void hashmap_hashmap_node_free(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *node
 ) {
-    if (map->ptr_free_k != NULL)
+    if (node->next != NULL) {
+        hashmap_hashmap_node_free(K_TYPE, V_TYPE)(map, node->next);
+    }
+    if (map->ptr_free_k != NULL) {
+        printf("Freeing %s: %d\n", node->key.buffer, node->value);
         map->ptr_free_k(&node->key);
+    }
     if (map->ptr_free_v != NULL)
         map->ptr_free_v(&node->value);
 }
@@ -191,8 +200,10 @@ void hashmap_hashmap_node_copy(K_TYPE, V_TYPE) (
         map->ptr_copy_k(&lhs->key, &rhs->key);
     if (map->ptr_copy_v != NULL)
         map->ptr_copy_v(&lhs->value, &rhs->value);
+    lhs->next = rhs->next;
 }
 
+// TODO rewrite
 bool hashmap_resize(K_TYPE, V_TYPE) (hashmap(K_TYPE, V_TYPE) *map, const size_t new_cap) {
     if (map->buckets == NULL) { return false; }
     const size_t total_size = new_cap * sizeof(hashmap_node(K_TYPE, V_TYPE));
@@ -299,9 +310,8 @@ bool hashmap_remove(K_TYPE, V_TYPE) (hashmap(K_TYPE, V_TYPE) *map, K_TYPE _key) 
 
     if (map->ptr_key_equals(_key, bucketptr->key)) {
         printf("removing first element.\n");
-//        memcpy(&map->buckets[bucket], map->buckets[bucket].next, sizeof(hashmap_node(K_TYPE, V_TYPE)));
-        hashmap_hashmap_node_copy(string, int)(map, bucketptr, bucketptr->next);
-        bucketptr->next = NULL;
+        memcpy(&map->buckets[bucket], map->buckets[bucket].next, sizeof(hashmap_node(K_TYPE, V_TYPE)));
+//        hashmap_hashmap_node_copy(string, int)(map, bucketptr, bucketptr->next);
         map->size--;
         return true;
     }

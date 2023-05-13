@@ -23,9 +23,11 @@ void string_copy(string *lhs, string *rhs) {
     if (lhs->buffer == NULL) {
         string_init_from_string(lhs, rhs);
     } else {
-        lhs->size = rhs->size;
-        lhs->capacity = rhs->capacity;
-        lhs->buffer = rhs->buffer;
+//        lhs->size = rhs->size;
+//        lhs->capacity = rhs->capacity;
+//        lhs->buffer = rhs->buffer;
+        string_free(lhs);
+        string_init_from_string(lhs, rhs);
     }
 }
 
