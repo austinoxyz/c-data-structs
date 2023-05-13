@@ -295,15 +295,17 @@ bool hashmap_remove(K_TYPE, V_TYPE) (hashmap(K_TYPE, V_TYPE) *map, K_TYPE _key) 
     const unsigned long bucket = map->ptr_hash(_key) % map->capacity;
     if (!map->allocated_buckets[bucket]) { return false; }
 
-    if (map->ptr_key_equals(_key, map->buckets[bucket].key)) {
+    hashmap_node(K_TYPE, V_TYPE) *bucketptr = &(map->buckets[bucket]);
+
+    if (map->ptr_key_equals(_key, bucketptr->key)) {
         printf("removing first element.\n");
 //        memcpy(&map->buckets[bucket], map->buckets[bucket].next, sizeof(hashmap_node(K_TYPE, V_TYPE)));
-        hashmap_hashmap_node_copy(string, int)(map, &map->buckets[bucket], map->buckets[bucket].next);
+        hashmap_hashmap_node_copy(string, int)(map, bucketptr, bucketptr->next);
+        bucketptr->next = NULL;
         map->size--;
         return true;
     }
 
-    hashmap_node(K_TYPE, V_TYPE) *bucketptr = &(map->buckets[bucket]);
     while (bucketptr->next != NULL) {
         if (map->ptr_key_equals(_key, bucketptr->next->key)) {
             hashmap_node(K_TYPE, V_TYPE) *temp = bucketptr->next->next;
