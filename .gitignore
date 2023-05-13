@@ -1,0 +1,6 @@
+**/core
+**/eval_preproc
+**/include/
+**/lib/
+**/test_build.sh
+**/.vimspector.json
