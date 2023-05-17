@@ -31,6 +31,8 @@ bool string_init(string* s);
 bool string_init_from_cstr(string* s, const char* cs);
 bool string_init_from_string(string* s, string* s2);
 
+void string_init_no_return(string *s);
+
 bool string_clear(string* s);
 
 bool string_push_back_c(string* s, const char c);
@@ -45,5 +47,6 @@ bool string_replace_contents_cstr(string* s, const char* s2, const size_t count)
 bool string_replace_contents_string(string* s, string* s2, const size_t count);
 
 bool string_equals(string lhs, string rhs);
+void string_copy(string *lhs, string rhs);
 
 #endif // _MY_STRING__

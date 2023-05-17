@@ -39,6 +39,10 @@ bool string_init(string* s) {
     return string_init_with_capacity(s, INITIAL_STRING_CAP);
 } 
 
+void string_init_no_return(string *s) {
+    string_init(s);
+}
+
 void string_free(string* s) {
     if (s->buffer != NULL) {
         free(s->buffer);
@@ -119,10 +123,6 @@ bool string_replace_contents_cstr(string* s, const char* s2, const size_t count)
     }
 
     return string_replace_cstr(s, s2, 0, count);
-
-//    return string_clear(s) 
-//        && (count > s->capacity ? string_increase_capacity(s, NEXT_MEM_SIZE(count, MEM_BLOCK_SIZE)) : true)
-//        && string_replace_cstr(s, s2, 0, count);
 }
 
 bool string_replace_contents_string(string* s, string* s2, const size_t count) {
@@ -130,10 +130,21 @@ bool string_replace_contents_string(string* s, string* s2, const size_t count) {
 }
 
 bool string_equals(string lhs, string rhs) {
+    if (lhs.buffer == NULL || rhs.buffer == NULL) return false;
     return !strcmp(lhs.buffer, rhs.buffer);
 }
 
-# if 1
+void string_copy(string *lhs, string rhs) {
+    if (lhs->buffer == NULL) {
+        string_init_from_string(lhs, &rhs);
+    } else {
+        if (lhs->capacity < rhs.size)
+            string_increase_capacity(lhs, rhs.capacity);
+        memcpy(lhs->buffer, rhs.buffer, rhs.capacity * sizeof(char));
+    }
+}
+
+# if 0
 int main(void) {
     string s;
     string_init(&s);
@@ -162,7 +173,8 @@ int main(void) {
     string_push_back_cstr(&s, s2);
     string_push_back_string(&s, &s3);
 
-    string test_str; string_init_from_string(&test_str, &s);
+    string test_str; 
+    string_init_from_string(&test_str, &s);
 
     printf("\n\n\n");
 
@@ -203,5 +215,9 @@ int main(void) {
 
     string_init_from_cstr(&s, "This is a new s!");
     printf("new s: %s\n", s.buffer);
+
+    string copyee;
+    string_copy(&copyee, s);
+    printf("copyee contents: %s\n", copyee.buffer);
 }
 #endif // main
