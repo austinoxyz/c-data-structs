@@ -1,8 +1,5 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdbool.h> 
-#include <string.h>
+#include "includestd.h"
+#include "tokenpaste.h"
 
 // must define K_TYPE, V_TYPE
 
@@ -14,13 +11,7 @@
 #define NEXT_CAPACITY_UP(curr) ((HASHMAP_BLOCK_SIZE) * (((curr) / (HASHMAP_BLOCK_SIZE)) + 1))
 #define MAX_HASHMAP_SIZE ((sizeof(K_TYPE) + sizeof(V_TYPE)) * (1028 * 1028))
 
-#define TOKENPASTE2(x, y) x ## y
-#define TOKENPASTE3(x, y, z) x ## y ## z
-#define TOKENPASTE4(a, b, c, d) a ## b ## c ## d
-#define TOKENPASTE5(a, b, c, d, e) a ## b ## c ## d ## e
-
-#endif // _VEC_MACROS__
-
+#endif // _HASHMAP_MACROS__
 
 #define hashmap_node(K, E) TOKENPASTE4(K, _, E, _hashmap_node)
 struct hashmap_node(K_TYPE, V_TYPE) {
@@ -37,20 +28,16 @@ struct hashmap(K_TYPE, V_TYPE) {
 
     hashmap_node(K_TYPE, V_TYPE) **buckets;
 
-    void (*ptr_init_k)(K_TYPE *_key);
-    void (*ptr_init_v)(V_TYPE *_value);
+    void (*key_init)(K_TYPE *_key);
+    void (*key_free)(K_TYPE *_key);
+    void (*key_copy)(K_TYPE *lhs, K_TYPE rhs);
+    bool (*key_compare)(K_TYPE *lhs, K_TYPE *rhs);
+    bool (*key_equals)(K_TYPE lhs, K_TYPE rhs);
+    unsigned long (*key_hash)(K_TYPE key);
 
-    void (*ptr_free_k)(K_TYPE *_key);
-    void (*ptr_free_v)(V_TYPE *_value);
-
-    void (*ptr_copy_k)(K_TYPE *lhs, K_TYPE rhs);
-    void (*ptr_copy_v)(V_TYPE *lhs, V_TYPE rhs);
-
-    unsigned long (*ptr_hash)(K_TYPE key);
-
-    bool (*ptr_key_equals)(K_TYPE lhs, K_TYPE rhs);
-
-    K_TYPE *null_key;
+    void (*value_init)(V_TYPE *_value);
+    void (*value_free)(V_TYPE *_value);
+    void (*value_copy)(V_TYPE *lhs, V_TYPE rhs);
 };
 typedef struct hashmap(K_TYPE, V_TYPE) hashmap(K_TYPE, V_TYPE);
 
@@ -65,190 +52,113 @@ void hashmap_node_init(K_TYPE, V_TYPE) (
 hashmap_node(K_TYPE, V_TYPE) *hashmap_node_new(K_TYPE, V_TYPE) ();
 
 #define hashmap_init(K, E) TOKENPASTE4(K, _, E, _hashmap_init)
-bool hashmap_init(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        unsigned long (*hash)(K_TYPE key), 
-        bool (*key_equals)(K_TYPE lhs, K_TYPE rhs));
+bool hashmap_init(K_TYPE, V_TYPE) (hashmap(K_TYPE, V_TYPE) *map);
 
 #define hashmap_free(K, E) TOKENPASTE4(K, _, E, _hashmap_free)
 void hashmap_free(K_TYPE, V_TYPE) (hashmap(K_TYPE, V_TYPE) *map);
 
 #define hashmap_node_free(K, E) TOKENPASTE4(K, _, E, _hashmap_node_free)
-void hashmap_node_free(K_TYPE, V_TYPE) (
+void 
+hashmap_node_free(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *node);
 
 #define hashmap_node_free_no_recurse(K, E) TOKENPASTE4(K, _, E, _hashmap_node_free_no_recurse)
-void hashmap_node_free_no_recurse(K_TYPE, V_TYPE) (
+void 
+hashmap_node_free_no_recurse(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *node);
 
 #define hashmap_node_copy(K, E) TOKENPASTE4(K, _, E, _hashmap_node_copy)
-void hashmap_node_copy(K_TYPE, V_TYPE) (
+void 
+hashmap_node_copy(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *lhs,
         hashmap_node(K_TYPE, V_TYPE) *rhs);
 
 #define hashmap_node_set_key(K, E) TOKENPASTE4(K, _, E, _hashmap_node_set_key)
-void hashmap_node_set_key(K_TYPE, V_TYPE) (
+void 
+hashmap_node_set_key(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *node,
         K_TYPE _key);
 
 #define hashmap_node_set_value(K, E) TOKENPASTE4(K, _, E, _hashmap_node_set_value)
-void hashmap_node_set_value(K_TYPE, V_TYPE) (
+void 
+hashmap_node_set_value(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *node,
         V_TYPE _value);
 
-#define hashmap_set_init_key_func(K, E) TOKENPASTE4(K, _, E, _hashmap_set_init_key_func)
-void hashmap_set_init_key_func(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        void (*init_key)(K_TYPE *_key));
-
-#define hashmap_set_init_value_func(K, E) TOKENPASTE4(K, _, E, _hashmap_set_init_value_func)
-void hashmap_set_init_value_func(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        void (*init_value)(V_TYPE *_value));
-
-#define hashmap_set_free_key_func(K, E) TOKENPASTE4(K, _, E, _hashmap_set_free_key_func)
-void hashmap_set_free_key_func(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        void (*free_key)(K_TYPE *_key));
-
-#define hashmap_set_free_value_func(K, E) TOKENPASTE4(K, _, E, _hashmap_set_free_value_func)
-void hashmap_set_free_value_func(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        void (*free_value)(V_TYPE *_value));
-
-#define hashmap_set_copy_key_func(K, E) TOKENPASTE4(K, _, E, _hashmap_set_copy_key_func)
-void hashmap_set_copy_key_func(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        void (*copy_key)(K_TYPE *lhs, K_TYPE rhs));
-
-#define hashmap_set_copy_value_func(K, E) TOKENPASTE4(K, _, E, _hashmap_set_copy_value_func)
-void hashmap_set_copy_value_func(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        void (*copy_value)(V_TYPE *lhs, V_TYPE rhs));
-
-#define hashmap_set_null_key(K, E) TOKENPASTE4(K, _, E, _hashmap_set_null_key)
-void hashmap_set_null_key(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        K_TYPE *_null_key);
-
 #define hashmap_resize(K, E) TOKENPASTE4(K, _, E, _hashmap_resize)
-bool hashmap_resize(K_TYPE, V_TYPE) (
+bool 
+hashmap_resize(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         const size_t new_cap);
 
 #define hashmap_insert_or_assign(K, E) TOKENPASTE4(K, _, E, _hashmap_insert_or_assign)
-bool hashmap_insert_or_assign(K_TYPE, V_TYPE) (
+bool 
+hashmap_insert_or_assign(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         K_TYPE _key, 
         V_TYPE _value);
 
 #define hashmap_insert(K, E) TOKENPASTE4(K, _, E, _hashmap_insert)
-bool hashmap_insert(K_TYPE, V_TYPE) (
+bool 
+hashmap_insert(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         K_TYPE _key, V_TYPE _value);
 
 #define hashmap_at(K, E) TOKENPASTE4(K, _, E, _hashmap_at)
-bool hashmap_at(K_TYPE, V_TYPE) (
+bool 
+hashmap_at(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         K_TYPE _key, V_TYPE *value_ret_value);
 
 #define hashmap_contains(K, E) TOKENPASTE4(K, _, E, _hashmap_contains)
-bool hashmap_contains(K_TYPE, V_TYPE) (
+bool 
+hashmap_contains(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         K_TYPE _key);
 
 #define hashmap_count(K, E) TOKENPASTE4(K, _, E, _hashmap_count)
-size_t hashmap_count(K_TYPE, V_TYPE) (
+size_t 
+hashmap_count(K_TYPE, V_TYPE) (
+        hashmap(K_TYPE, V_TYPE) *map, 
+        K_TYPE _key);
+
+#define hashmap_find(K, E) TOKENPASTE4(K, _, E, _hashmap_find)
+hashmap_node(K_TYPE, V_TYPE) * 
+hashmap_find(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         K_TYPE _key);
 
 #define hashmap_remove(K, E) TOKENPASTE4(K, _, E, _hashmap_remove)
-bool hashmap_remove(K_TYPE, V_TYPE) (
+bool 
+hashmap_remove(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         K_TYPE _key);
 
-bool hashmap_init(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        unsigned long (*hash)(K_TYPE key),
-        bool (*key_equals)(K_TYPE lhs, K_TYPE rhs)
-) {
+bool 
+hashmap_init(K_TYPE, V_TYPE) (hashmap(K_TYPE, V_TYPE) *map) {
     map->size = 0;
     map->capacity = INITIAL_HASHMAP_CAP;
 
     map->buckets = (hashmap_node(K_TYPE, V_TYPE) **) malloc(map->capacity * sizeof(hashmap_node(K_TYPE, V_TYPE) *));
-    if (!map->buckets) { return false; }
-    for (size_t i = 0; i < map->capacity; ++i) { map->buckets[i] = NULL; }
+    if (!map->buckets) return false;
+    for (size_t i = 0; i < map->capacity; ++i) map->buckets[i] = NULL;
 
-    map->ptr_hash = hash;
-    map->ptr_key_equals = key_equals;
-    map->ptr_init_k = NULL;
-    map->ptr_init_v = NULL;
-    map->ptr_free_k = NULL;
-    map->ptr_free_v = NULL;
-    map->ptr_copy_k = NULL;
-    map->ptr_copy_v = NULL;
+    map->key_init = NULL;
+    map->key_free = NULL;
+    map->key_copy = NULL;
+    map->key_hash = NULL;
+    map->key_equals = NULL;
+
+    map->value_init = NULL;
+    map->value_free = NULL;
+    map->value_copy = NULL;
+
     return true;
-}
-
-void 
-hashmap_set_init_key_func(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        void (*init_key)(K_TYPE *_key)
-) {
-    map->ptr_init_k = init_key;
-}
-
-void 
-hashmap_set_init_value_func(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        void (*init_value)(V_TYPE *_value)
-) {
-    map->ptr_init_v = init_value;
-}
-
-void 
-hashmap_set_free_key_func(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        void (*free_key)(K_TYPE *_key)
-) {
-    map->ptr_free_k = free_key;
-}
-
-void 
-hashmap_set_free_value_func(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        void (*free_value)(V_TYPE *_value)
-) {
-    map->ptr_free_v = free_value;
-}
-
-void 
-hashmap_set_copy_key_func(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        void (*copy_key)(K_TYPE *lhs, K_TYPE rhs)
-) {
-    map->ptr_copy_k = copy_key;
-}
-
-void 
-hashmap_set_copy_value_func(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        void (*copy_value)(V_TYPE *lhs, V_TYPE rhs)
-) {
-    map->ptr_copy_v = copy_value;
-}
-
-void 
-hashmap_set_null_key(K_TYPE, V_TYPE) (
-        hashmap(K_TYPE, V_TYPE) *map, 
-        K_TYPE *_null_key
-) {
-    map->null_key = _null_key;
 }
 
 void hashmap_node_init(K_TYPE, V_TYPE) (
@@ -257,20 +167,26 @@ void hashmap_node_init(K_TYPE, V_TYPE) (
         K_TYPE _key, 
         V_TYPE _value
 ) {
-    if (map->ptr_init_k != NULL) { map->ptr_init_k(&node->key); }
-    if (map->ptr_init_v != NULL) { map->ptr_init_v(&node->value); }
+    if (map->key_init ) 
+        map->key_init(&node->key);
+    if (map->value_init ) 
+        map->value_init(&node->value);
+
     hashmap_node_set_key(K_TYPE, V_TYPE)(map, node, _key);
     hashmap_node_set_value(K_TYPE, V_TYPE)(map, node, _value);
     node->next = NULL;
 }
 
-void hashmap_node_set_key(K_TYPE, V_TYPE) (
+void 
+hashmap_node_set_key(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *node,
         K_TYPE _key
 ) {
-    if (map->ptr_copy_k != NULL) { map->ptr_copy_k(&node->key, _key); }
-    else { node->key = _key; }
+    if (map->key_copy ) 
+        map->key_copy(&node->key, _key);
+    else 
+        node->key = _key;
 }
 
 void 
@@ -279,13 +195,15 @@ hashmap_node_set_value(K_TYPE, V_TYPE) (
         hashmap_node(K_TYPE, V_TYPE) *node,
         V_TYPE _value
 ) {
-    if (map->ptr_copy_v != NULL) { map->ptr_copy_v(&node->value, _value); }
-    else { node->value = _value; }
+    if (map->value_copy ) 
+        map->value_copy(&node->value, _value);
+    else 
+        node->value = _value;
 }
 
 void 
 hashmap_free(K_TYPE, V_TYPE) (hashmap(K_TYPE, V_TYPE) *map) {
-    if (map->buckets != NULL) {
+    if (map->buckets) {
         for (size_t bucket = 0; bucket < map->capacity; ++bucket)
             if (map->buckets[bucket])
                 hashmap_node_free(K_TYPE, V_TYPE)(map, map->buckets[bucket]);
@@ -298,15 +216,12 @@ hashmap_node_free(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *node
 ) {
-    if (node->next != NULL) {
+    if (node->next) 
         hashmap_node_free(K_TYPE, V_TYPE)(map, node->next);
-    }
-    if (map->ptr_free_k != NULL) {
-        printf("Freeing %s: %d\n", node->key.buffer, node->value);
-        map->ptr_free_k(&node->key);
-    }
-    if (map->ptr_free_v != NULL)
-        map->ptr_free_v(&node->value);
+    if (map->key_free) 
+        map->key_free(&node->key);
+    if (map->value_free) 
+        map->value_free(&node->value);
 }
 
 void
@@ -314,12 +229,10 @@ hashmap_node_free_no_recurse(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         hashmap_node(K_TYPE, V_TYPE) *node
 ) {
-    if (map->ptr_free_k != NULL) {
-        printf("Freeing %s: %d\n", node->key.buffer, node->value);
-        map->ptr_free_k(&node->key);
-    }
-    if (map->ptr_free_v != NULL)
-        map->ptr_free_v(&node->value);
+    if (map->key_free ) 
+        map->key_free(&node->key);
+    if (map->value_free) 
+        map->value_free(&node->value);
 }
 
 void 
@@ -328,10 +241,10 @@ hashmap_node_copy(K_TYPE, V_TYPE) (
         hashmap_node(K_TYPE, V_TYPE) *lhs,
         hashmap_node(K_TYPE, V_TYPE) *rhs
 ) {
-    if (map->ptr_copy_k != NULL)
-        map->ptr_copy_k(&lhs->key, rhs->key);
-    if (map->ptr_copy_v != NULL)
-        map->ptr_copy_v(&lhs->value, rhs->value);
+    if (map->key_copy)
+        map->key_copy(&lhs->key, rhs->key);
+    if (map->value_copy)
+        map->value_copy(&lhs->value, rhs->value);
     lhs->next = rhs->next;
 }
 
@@ -355,22 +268,21 @@ hashmap_insert_or_assign(K_TYPE, V_TYPE) (
         K_TYPE _key, 
         V_TYPE _value
 ) {
-    const unsigned long bucket = map->ptr_hash(_key) % map->capacity;
+    const unsigned long bucket = map->key_hash(_key) % map->capacity;
     if (!map->buckets[bucket]) {
         map->buckets[bucket] = (hashmap_node(K_TYPE, V_TYPE) *) malloc(sizeof(hashmap_node(K_TYPE, V_TYPE)));
         hashmap_node_init(K_TYPE, V_TYPE)(map, map->buckets[bucket], _key, _value);
     } else {
         hashmap_node(K_TYPE, V_TYPE) *bucketptr = map->buckets[bucket];
         do {
-            if (map->ptr_key_equals(_key, bucketptr->key)) {
-                printf("keys are equal!\n");
+            if (map->key_equals(_key, bucketptr->key)) {
                 bucketptr->value = _value;
                 return true;
             }
             bucketptr = bucketptr->next;
-        } while (bucketptr != NULL);
+        } while (bucketptr );
         bucketptr->next = (hashmap_node(K_TYPE, V_TYPE) *) malloc(sizeof(hashmap_node(K_TYPE, V_TYPE)));
-        if (bucketptr->next == NULL) { return false; }
+        if (bucketptr->next == NULL) return false;
         hashmap_node_init(K_TYPE, V_TYPE)(map, bucketptr->next, _key, _value);
     }
     map->size++;
@@ -383,17 +295,16 @@ hashmap_insert(K_TYPE, V_TYPE) (
         K_TYPE _key, 
         V_TYPE _value
 ) {
-    const unsigned long bucket = map->ptr_hash(_key) % map->capacity;
+    const unsigned long bucket = map->key_hash(_key) % map->capacity;
     if (!map->buckets[bucket]) {
         map->buckets[bucket] = (hashmap_node(K_TYPE, V_TYPE) *) malloc(sizeof(hashmap_node(K_TYPE, V_TYPE)));
         hashmap_node_init(K_TYPE, V_TYPE)(map, map->buckets[bucket], _key, _value);
     } else {
         hashmap_node(K_TYPE, V_TYPE) *bucketptr = map->buckets[bucket];
-        while (bucketptr->next != NULL) {
+        while (bucketptr->next)
             bucketptr = bucketptr->next;
-        }
         bucketptr->next = (hashmap_node(K_TYPE, V_TYPE) *) malloc(sizeof(hashmap_node(K_TYPE, V_TYPE)));
-        if (bucketptr->next == NULL) { return false; }
+        if (bucketptr->next == NULL) return false;
         hashmap_node_init(K_TYPE, V_TYPE)(map, bucketptr->next, _key, _value);
     }
     map->size++;
@@ -405,16 +316,15 @@ hashmap_contains(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         K_TYPE _key
 ) {
-    if (map->size == 0) { return false; }
+    if (map->size == 0) return false;
 
-    const unsigned long bucket = map->ptr_hash(_key) % map->capacity;
-    if (!map->buckets[bucket]) { return false; }
+    const unsigned long bucket = map->key_hash(_key) % map->capacity;
+    if (!map->buckets[bucket]) return false;
 
     hashmap_node(K_TYPE, V_TYPE) *bucketptr = map->buckets[bucket];
     do {
-        if (map->ptr_key_equals(_key, bucketptr->key)) 
-            return true;
-    } while ((bucketptr = bucketptr->next) != NULL);
+        if (map->key_equals(_key, bucketptr->key)) return true;
+    } while ((bucketptr = bucketptr->next) );
     return false;
 }
 
@@ -423,17 +333,16 @@ hashmap_count(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         K_TYPE _key
 ) {
-    if (map->size == 0) { return 0; }
+    if (map->size == 0) return 0;
 
-    const unsigned long bucket = map->ptr_hash(_key) % map->capacity;
-    if (!map->buckets[bucket]) { return 0; }
+    const unsigned long bucket = map->key_hash(_key) % map->capacity;
+    if (!map->buckets[bucket]) return 0;
 
     size_t total = 0;
     hashmap_node(K_TYPE, V_TYPE) *bucketptr = map->buckets[bucket];
     do {
-        if (map->ptr_key_equals(_key, bucketptr->key)) 
-            ++total;
-    } while ((bucketptr = bucketptr->next) != NULL);
+        if (map->key_equals(_key, bucketptr->key)) ++total;
+    } while ((bucketptr = bucketptr->next));
     return total;
 }
 
@@ -443,19 +352,44 @@ hashmap_at(K_TYPE, V_TYPE) (
         K_TYPE _key, 
         V_TYPE *value_ret_value
 ) {
-    if (map->size == 0) { return false; }
+    if (map->size == 0) return false;
 
-    const unsigned long bucket = map->ptr_hash(_key) % map->capacity;
-    if (!map->buckets[bucket]) { return false; }
+    const unsigned long bucket = map->key_hash(_key) % map->capacity;
+    if (!map->buckets[bucket]) return false;
 
     hashmap_node(K_TYPE, V_TYPE) *bucketptr = map->buckets[bucket];
     do {
-        if (map->ptr_key_equals(_key, bucketptr->key)) {
+        if (map->key_equals(_key, bucketptr->key)) {
             *value_ret_value = bucketptr->value;
             return true;
         }
         bucketptr = bucketptr->next;
-    } while ((bucketptr = bucketptr->next) != NULL);
+    } while ((bucketptr = bucketptr->next));
+    return false;
+}
+
+hashmap_node(K_TYPE, V_TYPE) * 
+hashmap_find(K_TYPE, V_TYPE) (
+        hashmap(K_TYPE, V_TYPE) *map, 
+        K_TYPE _key
+) {
+    if (map->size == 0) return false;
+
+    const unsigned long bucket = map->key_hash(_key) % map->capacity;
+    if (!map->buckets[bucket]) return false;
+
+    hashmap_node(K_TYPE, V_TYPE) *bucketptr = map->buckets[bucket];
+
+    if (map->key_equals(_key, bucketptr->key)) {
+        return bucketptr;
+    } else {
+        while (bucketptr->next) {
+            bucketptr = bucketptr->next;
+            if (map->key_equals(_key, bucketptr->key)) {
+                return bucketptr;
+            }
+        }
+    }
     return false;
 }
 
@@ -464,28 +398,26 @@ hashmap_remove(K_TYPE, V_TYPE) (
         hashmap(K_TYPE, V_TYPE) *map, 
         K_TYPE _key
 ) {
-    if (map->size == 0) { return false; }
+    if (map->size == 0) return false;
 
-    const unsigned long bucket = map->ptr_hash(_key) % map->capacity;
-    if (!map->buckets[bucket]) { return false; }
+    const unsigned long bucket = map->key_hash(_key) % map->capacity;
+    if (!map->buckets[bucket]) return false;
 
-    hashmap_node(K_TYPE, V_TYPE) *bucketptr = map->buckets[bucket];
-
-    if (map->ptr_key_equals(_key, bucketptr->key)) {
-        printf("removing first element.\n");
-        if (map->buckets[bucket]->next != NULL) {
-            memcpy(map->buckets[bucket], map->buckets[bucket]->next, sizeof(hashmap_node(K_TYPE, V_TYPE)));
-        } else {
+    if (map->key_equals(_key, map->buckets[bucket]->key)) {
+        if (map->buckets[bucket]->next) {
             hashmap_node(K_TYPE, V_TYPE) *temp = map->buckets[bucket]->next;
             hashmap_node_free_no_recurse(K_TYPE, V_TYPE)(map, map->buckets[bucket]);
             map->buckets[bucket] = temp;
+        } else {
+            hashmap_node_free(K_TYPE, V_TYPE)(map, map->buckets[bucket]);
         }
         map->size--;
         return true;
     }
 
-    while (bucketptr->next != NULL) {
-        if (map->ptr_key_equals(_key, bucketptr->next->key)) {
+    hashmap_node(K_TYPE, V_TYPE) *bucketptr = map->buckets[bucket];
+    while (bucketptr->next) {
+        if (map->key_equals(_key, bucketptr->next->key)) {
             hashmap_node(K_TYPE, V_TYPE) *temp = bucketptr->next->next;
             hashmap_node_free(K_TYPE, V_TYPE)(map, bucketptr->next);
             bucketptr->next = temp;
