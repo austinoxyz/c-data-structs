@@ -47,32 +47,17 @@ extern void __assert (const char *__assertion, const char *__file, int __line)
 
 
 # 2 "my_set.c" 2
-
-
-# 1 "my_set.h" 1
-# 1 "../util/include/includestd.h" 1
-
-
-# 1 "/usr/include/stdio.h" 1 3 4
-# 27 "/usr/include/stdio.h" 3 4
-# 1 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 1 3 4
-# 28 "/usr/include/stdio.h" 2 3 4
-
-
-
-
-
+# 1 "/usr/include/time.h" 1 3 4
+# 29 "/usr/include/time.h" 3 4
 # 1 "/usr/lib/gcc/x86_64-linux-gnu/10/include/stddef.h" 1 3 4
 # 209 "/usr/lib/gcc/x86_64-linux-gnu/10/include/stddef.h" 3 4
 typedef long unsigned int size_t;
-# 34 "/usr/include/stdio.h" 2 3 4
+# 30 "/usr/include/time.h" 2 3 4
 
 
-# 1 "/usr/lib/gcc/x86_64-linux-gnu/10/include/stdarg.h" 1 3 4
-# 40 "/usr/lib/gcc/x86_64-linux-gnu/10/include/stdarg.h" 3 4
-typedef __builtin_va_list __gnuc_va_list;
-# 37 "/usr/include/stdio.h" 2 3 4
 
+# 1 "/usr/include/x86_64-linux-gnu/bits/time.h" 1 3 4
+# 26 "/usr/include/x86_64-linux-gnu/bits/time.h" 3 4
 # 1 "/usr/include/x86_64-linux-gnu/bits/types.h" 1 3 4
 # 27 "/usr/include/x86_64-linux-gnu/bits/types.h" 3 4
 # 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
@@ -201,7 +186,153 @@ typedef unsigned int __socklen_t;
 
 
 typedef int __sig_atomic_t;
-# 39 "/usr/include/stdio.h" 2 3 4
+# 27 "/usr/include/x86_64-linux-gnu/bits/time.h" 2 3 4
+# 34 "/usr/include/time.h" 2 3 4
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/clock_t.h" 1 3 4
+
+
+
+
+
+
+typedef __clock_t clock_t;
+# 38 "/usr/include/time.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/time_t.h" 1 3 4
+
+
+
+
+
+
+typedef __time_t time_t;
+# 39 "/usr/include/time.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h" 1 3 4
+
+
+
+
+
+
+struct tm
+{
+  int tm_sec;
+  int tm_min;
+  int tm_hour;
+  int tm_mday;
+  int tm_mon;
+  int tm_year;
+  int tm_wday;
+  int tm_yday;
+  int tm_isdst;
+
+
+
+
+
+  long int __tm_gmtoff;
+  const char *__tm_zone;
+
+};
+# 40 "/usr/include/time.h" 2 3 4
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h" 1 3 4
+
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/endian.h" 1 3 4
+# 35 "/usr/include/x86_64-linux-gnu/bits/endian.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/endianness.h" 1 3 4
+# 36 "/usr/include/x86_64-linux-gnu/bits/endian.h" 2 3 4
+# 7 "/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h" 2 3 4
+
+
+
+struct timespec
+{
+  __time_t tv_sec;
+
+
+
+  __syscall_slong_t tv_nsec;
+# 26 "/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h" 3 4
+};
+# 43 "/usr/include/time.h" 2 3 4
+# 68 "/usr/include/time.h" 3 4
+
+
+
+
+extern clock_t clock (void) __attribute__ ((__nothrow__ , __leaf__));
+
+
+extern time_t time (time_t *__timer) __attribute__ ((__nothrow__ , __leaf__));
+
+
+extern double difftime (time_t __time1, time_t __time0)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__));
+
+
+extern time_t mktime (struct tm *__tp) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+
+
+extern size_t strftime (char *__restrict __s, size_t __maxsize,
+   const char *__restrict __format,
+   const struct tm *__restrict __tp) __attribute__ ((__nothrow__ , __leaf__));
+# 119 "/usr/include/time.h" 3 4
+extern struct tm *gmtime (const time_t *__timer) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+extern struct tm *localtime (const time_t *__timer) __attribute__ ((__nothrow__ , __leaf__));
+# 139 "/usr/include/time.h" 3 4
+extern char *asctime (const struct tm *__tp) __attribute__ ((__nothrow__ , __leaf__));
+
+
+extern char *ctime (const time_t *__timer) __attribute__ ((__nothrow__ , __leaf__));
+# 159 "/usr/include/time.h" 3 4
+extern char *__tzname[2];
+extern int __daylight;
+extern long int __timezone;
+# 257 "/usr/include/time.h" 3 4
+extern int timespec_get (struct timespec *__ts, int __base)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+# 301 "/usr/include/time.h" 3 4
+
+# 3 "my_set.c" 2
+
+
+# 1 "my_set.h" 1
+# 1 "../util/include/includestd.h" 1
+
+
+# 1 "/usr/include/stdio.h" 1 3 4
+# 27 "/usr/include/stdio.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 1 3 4
+# 28 "/usr/include/stdio.h" 2 3 4
+
+
+
+
+
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/10/include/stddef.h" 1 3 4
+# 34 "/usr/include/stdio.h" 2 3 4
+
+
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/10/include/stdarg.h" 1 3 4
+# 40 "/usr/lib/gcc/x86_64-linux-gnu/10/include/stdarg.h" 3 4
+typedef __builtin_va_list __gnuc_va_list;
+# 37 "/usr/include/stdio.h" 2 3 4
+
+
 # 1 "/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h" 1 3 4
 
 
@@ -938,16 +1069,10 @@ void int_set_node_free_no_recurse (
         int_set_node *node);
 
 
-void int_set_node_set_key(
-        int_set *_set,
-        int_set_node *node,
-        int _key);
 
-
-
-# 62 "my_set.h" 3 4
+# 56 "my_set.h" 3 4
 _Bool 
-# 62 "my_set.h"
+# 56 "my_set.h"
     int_set_init (int_set *_set);
 
 
@@ -955,16 +1080,16 @@ void int_set_free (int_set *_set);
 
 
 
-# 68 "my_set.h" 3 4
+# 62 "my_set.h" 3 4
 _Bool 
-# 68 "my_set.h"
+# 62 "my_set.h"
     int_set_insert (int_set *_set, int _key);
 
 
 
-# 71 "my_set.h" 3 4
+# 65 "my_set.h" 3 4
 _Bool 
-# 71 "my_set.h"
+# 65 "my_set.h"
     int_set_contains (int_set *_set, int _key);
 
 
@@ -972,22 +1097,22 @@ size_t int_set_count (int_set *_set, int _key);
 
 
 
-# 77 "my_set.h" 3 4
+# 71 "my_set.h" 3 4
 _Bool 
-# 77 "my_set.h"
+# 71 "my_set.h"
     int_set_erase (int_set *_set, int _key);
-
+# 91 "my_set.h"
 void int_set_node_init (
         int_set *_set,
         int_set_node *node,
         int _key
 ) {
-    if (_set->key_init) _set->key_init(&node->key);
-    int_set_node_set_key(_set, node, _key);
+    if ((_set)->key_init) (_set)->key_init((&node->key));
+    if ((_set)->key_copy) (_set)->key_copy((&node->key), (_key)); else *(&node->key) = (_key);
     node->next = 
-# 86 "my_set.h" 3 4
+# 98 "my_set.h" 3 4
                 ((void *)0)
-# 86 "my_set.h"
+# 98 "my_set.h"
                     ;
 }
 
@@ -997,32 +1122,19 @@ void int_set_node_free (
 ) {
     if (node->next)
         int_set_node_free(_set, node->next);
-    if (_set->key_free)
-        _set->key_free(&node->key);
-}
-
-void int_set_node_set_key(
-        int_set *_set,
-        int_set_node *node,
-        int _key
-) {
-    if (_set->key_copy)
-        _set->key_copy(&node->key, _key);
-    else
-        node->key = _key;
+    if ((_set)->key_free) (_set)->key_free((&node->key));
 }
 
 void int_set_node_free_no_recurse (
         int_set *_set,
         int_set_node *node) {
-    if (_set->key_free)
-        _set->key_free(&node->key);
+    if ((_set)->key_free) (_set)->key_free((&node->key));
 }
 
 
-# 117 "my_set.h" 3 4
+# 116 "my_set.h" 3 4
 _Bool 
-# 117 "my_set.h"
+# 116 "my_set.h"
     int_set_init (int_set *_set)
 {
     _set->size = 0;
@@ -1030,52 +1142,52 @@ _Bool
 
     _set->buckets = (int_set_node **) malloc(_set->capacity * sizeof(int_set_node *));
     if (!_set->buckets) return 
-# 123 "my_set.h" 3 4
+# 122 "my_set.h" 3 4
                               0
-# 123 "my_set.h"
+# 122 "my_set.h"
                                    ;
     for (size_t i = 0; i < _set->capacity; ++i) _set->buckets[i] = 
-# 124 "my_set.h" 3 4
+# 123 "my_set.h" 3 4
                                                                   ((void *)0)
-# 124 "my_set.h"
+# 123 "my_set.h"
                                                                       ;
 
 
     _set->key_init = 
+# 126 "my_set.h" 3 4
+                       ((void *)0)
+# 126 "my_set.h"
+                           ;
+    _set->key_free = 
 # 127 "my_set.h" 3 4
                        ((void *)0)
 # 127 "my_set.h"
                            ;
-    _set->key_free = 
+    _set->key_copy = 
 # 128 "my_set.h" 3 4
                        ((void *)0)
 # 128 "my_set.h"
                            ;
-    _set->key_copy = 
+    _set->key_equals = 
 # 129 "my_set.h" 3 4
                        ((void *)0)
 # 129 "my_set.h"
                            ;
-    _set->key_equals = 
+    _set->key_compare = 
 # 130 "my_set.h" 3 4
                        ((void *)0)
 # 130 "my_set.h"
                            ;
-    _set->key_compare = 
+    _set->key_hash = 
 # 131 "my_set.h" 3 4
                        ((void *)0)
 # 131 "my_set.h"
                            ;
-    _set->key_hash = 
-# 132 "my_set.h" 3 4
-                       ((void *)0)
-# 132 "my_set.h"
-                           ;
 
     return 
-# 134 "my_set.h" 3 4
+# 133 "my_set.h" 3 4
           1
-# 134 "my_set.h"
+# 133 "my_set.h"
               ;
 }
 
@@ -1089,11 +1201,9 @@ void int_set_free (int_set *_set) {
 }
 
 
-
-
-# 148 "my_set.h" 3 4
+# 145 "my_set.h" 3 4
 _Bool 
-# 148 "my_set.h"
+# 145 "my_set.h"
     int_set_insert (int_set *_set, int _key)
 {
     const unsigned long bucket = _set->key_hash(_key) % _set->capacity;
@@ -1102,136 +1212,158 @@ _Bool
         int_set_node_init(_set, _set->buckets[bucket], _key);
         _set->size++;
         return 
-# 155 "my_set.h" 3 4
+# 152 "my_set.h" 3 4
               1
-# 155 "my_set.h"
+# 152 "my_set.h"
                   ;
     }
-    printf("hash collision.\n");
 
-    int_set_node *bucketptr = _set->buckets[bucket];
-    while (bucketptr->next) {
+    int_set_node **bucketptrptr = &(_set->buckets[bucket]);
 
+    do {
+        if (((_set)->key_equals(((*bucketptrptr)->key), (_key)))) return 
+# 158 "my_set.h" 3 4
+                                                                 1
+# 158 "my_set.h"
+                                                                     ;
+    } while ( *(bucketptrptr = &((*bucketptrptr)->next)) );
 
-
-
-
-        if ((((_set)->key_equals && (_set)->key_equals((bucketptr->next)->key, (_key))) || (bucketptr->next)->key == _key)) {
-            printf("key equals\n");
-            return 
-# 168 "my_set.h" 3 4
-                  1
-# 168 "my_set.h"
-                      ;
-        }
-        printf("key doesn't equal.\n");
-        bucketptr = bucketptr->next;
-    }
-    bucketptr->next = (int_set_node *) malloc(sizeof(int_set_node));
-    printf("inserted new node.\n");
-    if (!bucketptr->next) return 
-# 175 "my_set.h" 3 4
+    *bucketptrptr = (int_set_node *) malloc(sizeof(int_set_node));
+    int_set_node_init(_set, *bucketptrptr, _key);
+    if (!(*bucketptrptr)) return 
+# 163 "my_set.h" 3 4
                                 0
-# 175 "my_set.h"
+# 163 "my_set.h"
                                      ;
     else return 
-# 176 "my_set.h" 3 4
+# 164 "my_set.h" 3 4
                1
-# 176 "my_set.h"
+# 164 "my_set.h"
                    ;
 }
 
 size_t int_set_count (int_set *_set, int _key)
 {
     const unsigned long bucket = _set->key_hash(_key) % _set->capacity;
-    if (!_set->buckets[bucket])
-        return 0;
+    if (!_set->buckets[bucket]) return 0;
 
-    int_set_node *bucketptr = _set->buckets[bucket];
-    while (bucketptr->next) {
-        if ((_set->key_equals && _set->key_equals(bucketptr->key, _key))
-            || bucketptr->key == _key)
-        {
-            return 1;
-        }
-        bucketptr = bucketptr->next;
-    }
+    int_set_node **bucketptrptr = &(_set->buckets[bucket]);
+    do {
+        if (((_set)->key_equals(((*bucketptrptr)->key), (_key)))) return 1;
+    } while ( *(bucketptrptr = &((*bucketptrptr)->next)) );
+
     return 0;
 }
 
 
-# 197 "my_set.h" 3 4
+# 180 "my_set.h" 3 4
 _Bool 
-# 197 "my_set.h"
+# 180 "my_set.h"
     int_set_contains (int_set *_set, int _key)
 {
     return int_set_count(_set, _key);
 }
-# 5 "my_set.c" 2
+
+
+# 185 "my_set.h" 3 4
+_Bool 
+# 185 "my_set.h"
+    int_set_erase (int_set *_set, int _key)
+{
+    const unsigned long bucket = _set->key_hash(_key) % _set->capacity;
+
+    if (!_set->buckets[bucket]) return 
+# 189 "my_set.h" 3 4
+                                      0
+# 189 "my_set.h"
+                                           ;
+
+    int_set_node **bucketptrptr = &_set->buckets[bucket];
+    do {
+        if (((_set)->key_equals(((*bucketptrptr)->key), (_key)))) {
+            if ((*bucketptrptr)->next) {
+                int_set_node *temp = (*bucketptrptr)->next;
+                int_set_node_free_no_recurse(_set, *bucketptrptr);
+                *bucketptrptr = temp;
+            } else {
+                int_set_node_free(_set, *bucketptrptr);
+                *bucketptrptr = 
+# 200 "my_set.h" 3 4
+                               ((void *)0)
+# 200 "my_set.h"
+                                   ;
+            }
+            return 
+# 202 "my_set.h" 3 4
+                  1
+# 202 "my_set.h"
+                      ;
+        }
+    }
+    while ( *(bucketptrptr = &((*bucketptrptr)->next)) );
+
+    return 
+# 207 "my_set.h" 3 4
+          0
+# 207 "my_set.h"
+               ;
+}
+# 6 "my_set.c" 2
 
 
 unsigned long int_hash(const int n) {
-    return (unsigned long) n % 32;
+    return (unsigned long) n;
 }
 
-int main(void) {
+
+# 12 "my_set.c" 3 4
+_Bool 
+# 12 "my_set.c"
+    int_equals(int lhs, int rhs) { return lhs == rhs; }
+
+void simple_test() {
     int_set _set;
     int_set_init(&_set);
     _set.key_hash = int_hash;
+    _set.key_equals = int_equals;
 
     
-# 16 "my_set.c" 3 4
+# 20 "my_set.c" 3 4
    _Bool 
-# 16 "my_set.c"
+# 20 "my_set.c"
         success;
 
     success = int_set_insert(&_set, 4);
     
-# 19 "my_set.c" 3 4
+# 23 "my_set.c" 3 4
    ((
-# 19 "my_set.c"
+# 23 "my_set.c"
    success
-# 19 "my_set.c" 3 4
+# 23 "my_set.c" 3 4
    ) ? (void) (0) : __assert_fail (
-# 19 "my_set.c"
+# 23 "my_set.c"
    "success"
-# 19 "my_set.c" 3 4
-   , "my_set.c", 19, __extension__ __PRETTY_FUNCTION__))
-# 19 "my_set.c"
+# 23 "my_set.c" 3 4
+   , "my_set.c", 23, __extension__ __PRETTY_FUNCTION__))
+# 23 "my_set.c"
                   ;
 
     success = int_set_insert(&_set, 36);
     
-# 22 "my_set.c" 3 4
+# 26 "my_set.c" 3 4
    ((
-# 22 "my_set.c"
+# 26 "my_set.c"
    success
-# 22 "my_set.c" 3 4
+# 26 "my_set.c" 3 4
    ) ? (void) (0) : __assert_fail (
-# 22 "my_set.c"
+# 26 "my_set.c"
    "success"
-# 22 "my_set.c" 3 4
-   , "my_set.c", 22, __extension__ __PRETTY_FUNCTION__))
-# 22 "my_set.c"
+# 26 "my_set.c" 3 4
+   , "my_set.c", 26, __extension__ __PRETTY_FUNCTION__))
+# 26 "my_set.c"
                   ;
 
     success = int_set_insert(&_set, 68);
-    
-# 25 "my_set.c" 3 4
-   ((
-# 25 "my_set.c"
-   success
-# 25 "my_set.c" 3 4
-   ) ? (void) (0) : __assert_fail (
-# 25 "my_set.c"
-   "success"
-# 25 "my_set.c" 3 4
-   , "my_set.c", 25, __extension__ __PRETTY_FUNCTION__))
-# 25 "my_set.c"
-                  ;
-
-    printf("inserting 4 a second time.\n");
-    success = int_set_insert(&_set, 4);
     
 # 29 "my_set.c" 3 4
    ((
@@ -1246,7 +1378,7 @@ int main(void) {
 # 29 "my_set.c"
                   ;
 
-    success = int_set_contains(&_set, 4);
+    success = int_set_insert(&_set, 4);
     
 # 32 "my_set.c" 3 4
    ((
@@ -1261,5 +1393,149 @@ int main(void) {
 # 32 "my_set.c"
                   ;
 
-    printf("Hello, World!\n");
+    success = int_set_contains(&_set, 4);
+    
+# 35 "my_set.c" 3 4
+   ((
+# 35 "my_set.c"
+   success
+# 35 "my_set.c" 3 4
+   ) ? (void) (0) : __assert_fail (
+# 35 "my_set.c"
+   "success"
+# 35 "my_set.c" 3 4
+   , "my_set.c", 35, __extension__ __PRETTY_FUNCTION__))
+# 35 "my_set.c"
+                  ;
+
+    success = int_set_erase(&_set, 36);
+    
+# 38 "my_set.c" 3 4
+   ((
+# 38 "my_set.c"
+   success
+# 38 "my_set.c" 3 4
+   ) ? (void) (0) : __assert_fail (
+# 38 "my_set.c"
+   "success"
+# 38 "my_set.c" 3 4
+   , "my_set.c", 38, __extension__ __PRETTY_FUNCTION__))
+# 38 "my_set.c"
+                  ;
+
+    success = int_set_contains(&_set, 36);
+    
+# 41 "my_set.c" 3 4
+   ((
+# 41 "my_set.c"
+   !success
+# 41 "my_set.c" 3 4
+   ) ? (void) (0) : __assert_fail (
+# 41 "my_set.c"
+   "!success"
+# 41 "my_set.c" 3 4
+   , "my_set.c", 41, __extension__ __PRETTY_FUNCTION__))
+# 41 "my_set.c"
+                   ;
+
+    success = int_set_insert(&_set, 100);
+    
+# 44 "my_set.c" 3 4
+   ((
+# 44 "my_set.c"
+   success
+# 44 "my_set.c" 3 4
+   ) ? (void) (0) : __assert_fail (
+# 44 "my_set.c"
+   "success"
+# 44 "my_set.c" 3 4
+   , "my_set.c", 44, __extension__ __PRETTY_FUNCTION__))
+# 44 "my_set.c"
+                  ;
+
+    int_set_free(&_set);
+}
+
+void stress_test() {
+    int_set _set;
+    int_set_init(&_set);
+    _set.key_hash = int_hash;
+
+    
+# 54 "my_set.c" 3 4
+   _Bool 
+# 54 "my_set.c"
+        success;
+    for (int i = 0; i < 100000; ++i) {
+        success = int_set_insert(&_set, i);
+        
+# 57 "my_set.c" 3 4
+       ((
+# 57 "my_set.c"
+       success
+# 57 "my_set.c" 3 4
+       ) ? (void) (0) : __assert_fail (
+# 57 "my_set.c"
+       "success"
+# 57 "my_set.c" 3 4
+       , "my_set.c", 57, __extension__ __PRETTY_FUNCTION__))
+# 57 "my_set.c"
+                      ;
+    }
+
+    success = int_set_contains(&_set, 10000);
+    
+# 61 "my_set.c" 3 4
+   ((
+# 61 "my_set.c"
+   success
+# 61 "my_set.c" 3 4
+   ) ? (void) (0) : __assert_fail (
+# 61 "my_set.c"
+   "success"
+# 61 "my_set.c" 3 4
+   , "my_set.c", 61, __extension__ __PRETTY_FUNCTION__))
+# 61 "my_set.c"
+                  ;
+    success = int_set_contains(&_set, 99999);
+    
+# 63 "my_set.c" 3 4
+   ((
+# 63 "my_set.c"
+   success
+# 63 "my_set.c" 3 4
+   ) ? (void) (0) : __assert_fail (
+# 63 "my_set.c"
+   "success"
+# 63 "my_set.c" 3 4
+   , "my_set.c", 63, __extension__ __PRETTY_FUNCTION__))
+# 63 "my_set.c"
+                  ;
+    success = int_set_contains(&_set, 100000);
+    
+# 65 "my_set.c" 3 4
+   ((
+# 65 "my_set.c"
+   !success
+# 65 "my_set.c" 3 4
+   ) ? (void) (0) : __assert_fail (
+# 65 "my_set.c"
+   "!success"
+# 65 "my_set.c" 3 4
+   , "my_set.c", 65, __extension__ __PRETTY_FUNCTION__))
+# 65 "my_set.c"
+                   ;
+}
+# 81 "my_set.c"
+int main(void) {
+    { printf("Running test %s.\n", "simple_test"); clock_t start = clock(), diff; simple_test(); diff = clock() - start; int ms = diff * 1000 / 
+# 82 "my_set.c" 3 4
+   ((__clock_t) 1000000)
+# 82 "my_set.c"
+   ; printf("Test took %d.%d seconds.\n", ms/1000, ms%1000); };
+    { printf("Running test %s.\n", "stress_test"); clock_t start = clock(), diff; stress_test(); diff = clock() - start; int ms = diff * 1000 / 
+# 83 "my_set.c" 3 4
+   ((__clock_t) 1000000)
+# 83 "my_set.c"
+   ; printf("Test took %d.%d seconds.\n", ms/1000, ms%1000); };
 }

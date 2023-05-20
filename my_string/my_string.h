@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <sys/time.h>
 
 size_t my_strlen(const char *s);
 
@@ -48,5 +49,7 @@ bool string_replace_contents_string(string* s, string* s2, const size_t count);
 
 bool string_equals(string lhs, string rhs);
 void string_copy(string *lhs, string rhs);
+
+const char *rand_cstr(const size_t size);
 
 #endif // _MY_STRING__

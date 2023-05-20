@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <time.h>
 
 #include "my_string.h"
 
@@ -21,84 +22,175 @@ unsigned long hash_string(string s) {
     return djb2(s.buffer);
 }
 
-// #define INIT_NULL_STRING(var_name) string_init_from_cstr(&(var_name), "");
+#define strfy(x) #x
 
-void run_tests(hashmap(string, int) *map, string s, string s2, string s3) 
-{
-    printf("s: %s\n", s.buffer);
-    printf("s2: %s\n", s2.buffer);
-    printf("s3: %s\n", s3.buffer);
+#define time_test_function(test_func)                               \
+{                                                                   \
+    printf("Running test %s.\n", strfy(test_func));                 \
+    clock_t start = clock(), diff;                                  \
+    test_func();                                                    \
+    diff = clock() - start;                                         \
+    int ms = diff * 1000 / CLOCKS_PER_SEC;                          \
+    printf("Test completed in %d.%d seconds.\n", ms/1000, ms%1000); \
+}
 
-    printf("\n");
+#define prepare_string_int_map(name) \
+    map(string, int) _map;                 \
+    map_init(string, int)(&_map);          \
+    _map.key_free = string_free;           \
+    _map.key_init = string_init_no_return; \
+    _map.key_copy = string_copy;           \
+    _map.key_hash = hash_string;           \
+    _map.key_equals = string_equals;
 
+#define prepare_strings() \
+    string s;                                              \
+    string_init_from_cstr(&s, "Hello, World!");            \
+    string s2;                                             \
+    string_init_from_cstr(&s2, "FooBar"); \
+    string s3;                                             \
+    string_init_from_cstr(&s3, "Unladen Swallow");
+    
+void test_insert_or_assign(void) {
     bool success;
-    printf("insert: \n\tkey=`s`\n\tvalue=%d\n", 22);
-    success = hashmap_insert(string, int)(map, s, 22);
-    assert(success);
-
-    printf("insert: \n\tkey=`s2`\n\tvalue=%d\n", 64);
-    success = hashmap_insert(string, int)(map, s2, 64);
-    assert(success);
-
-    printf("insert: \n\tkey=`s`\n\tvalue=%d\n", 28);
-    success = hashmap_insert(string, int)(map, s, 28);
-    assert(success);
-
-    printf("\n");
-
     int value;
-    printf("hashmap_at: \n\tkey=%s\n", s.buffer);
-    success = hashmap_at(string, int)(map, s, &value);
-    printf("Retrieved value: %d\n", value);
+    prepare_string_int_map(_map)
+    prepare_strings()
 
-    printf("\n");
-
-    printf("hashmap_at: \n\tkey=%s\n", s2.buffer);
-    success = hashmap_at(string, int)(map, s2, &value);
-    printf("Retrieved value: %d\n", value);
-
-    printf("\n");
-
-    success = hashmap_contains(string, int)(map, s);
-    printf("contains s: %s\n", success ? "true" : "false");
+    success = map_insert_or_assign(string, int)(&_map, s, 22);
     assert(success);
+    success = map_insert_or_assign(string, int)(&_map, s2, 64);
+    assert(success);
+    success = map_insert_or_assign(string, int)(&_map, s, 28);
 
-    success = hashmap_contains(string, int)(map, s3);
-    printf("contains s3: %s\n", success ? "true" : "false");
+    success = map_at(string, int)(&_map, s, &value);
+    assert(success);
+    assert(value == 28);
+    success = map_at(string, int)(&_map, s2, &value);
+    assert(success);
+    assert(value == 64);
+    success = map_at(string, int)(&_map, s3, &value);
     assert(!success);
 
-    printf("\n");
+    map_free(string, int)(&_map);
+    string_free(&s);
+    string_free(&s2);
+    string_free(&s3);
+}
 
-    printf("count s: %zu\n", hashmap_count(string, int)(map, s));
-    printf("\n");
+void test_insert(void) {
+    bool success;
+    int value;
+    prepare_string_int_map(_map)
+    prepare_strings()
+
+    success = map_insert(string, int)(&_map, s, 14);
+    assert(success);
+    success = map_insert(string, int)(&_map, s2, 92);
+    assert(success);
+    success = map_insert(string, int)(&_map, s, 100);
+
+    success = map_at(string, int)(&_map, s, &value);
+    assert(success);
+    assert(value == 14);
+    success = map_at(string, int)(&_map, s2, &value);
+    assert(success);
+    assert(value == 92);
+    success = map_at(string, int)(&_map, s3, &value);
+    assert(!success);
+
+    map_free(string, int)(&_map);
+    string_free(&s);
+    string_free(&s2);
+    string_free(&s3);
+}
+
+void test_count(void) {
+    bool success;
+    size_t count;
+    prepare_string_int_map(_map)
+    prepare_strings()
+
+    success = map_insert(string, int)(&_map, s, 14);
+    assert(success);
+    success = map_insert(string, int)(&_map, s2, 92);
+    assert(success);
+    success = map_insert(string, int)(&_map, s, 100);
+
+    count = map_count(string, int)(&_map, s);
+    assert(count == 2);
+    count = map_count(string, int)(&_map, s2);
+    assert(count == 1);
+    count = map_count(string, int)(&_map, s3);
+    assert(count == 0);
+
+    map_free(string, int)(&_map);
+    string_free(&s);
+    string_free(&s2);
+    string_free(&s3);
+}
+
+void test_contains(void) {
+    bool success;
+    prepare_string_int_map(_map)
+    prepare_strings()
+
+    success = map_insert(string, int)(&_map, s, 14);
+    assert(success);
+    success = map_insert(string, int)(&_map, s2, 92);
+    assert(success);
+    success = map_insert(string, int)(&_map, s, 100);
+
+    success = map_contains(string, int)(&_map, s);
+    assert(success);
+    success = map_contains(string, int)(&_map, s2);
+    assert(success);
+    success = map_contains(string, int)(&_map, s3);
+    assert(!success);
+
+    map_free(string, int)(&_map);
+    string_free(&s);
+    string_free(&s2);
+    string_free(&s3);
+}
+
+void stress_test(void) {
+    bool success;
+    prepare_string_int_map(_map)
+
+    // one hundred thousand random strings
+    printf("Creating strings...\n\n");
+    const size_t n_strings = 100000;
+    string *random_strings = (string *) malloc(n_strings * sizeof(string));
+    assert(random_strings);
+
+    for (size_t i = 0; i < n_strings; ++i) {
+        // FIXME setting size of rand_cstr to 16 causes the error 
+        // `my_hashmap: malloc.c:2379: sysmalloc: Assertion `(old_top == initial_top (av) && old_size == 0) || ((unsigned long) (old_size) >= MINSIZE && prev_inuse (old_top) && ((unsigned long) old_end & (pagesize - 1)) == 0)' failed.`
+        // later on in string_int_map_insert
+        // why do this?
+        const char *random_cstr = rand_cstr(17); 
+        string_init_from_cstr(&random_strings[i], random_cstr);
+        string_total_bytes += random_strings[i].capacity * sizeof(char);
+    }
+
+    int _n_strings = n_strings;
+    for (int i = 0; i < _n_strings; ++i) {
+        success = map_insert(string, int)(&_map, random_strings[i], i);
+        assert(success);
+    }
+
+    for (size_t i = 0; i < n_strings; ++i) 
+        string_free(&random_strings[i]);
+    map_free(string, int)(&_map);
+    free(random_strings);
 }
 
 int main(void) 
 {
-    hashmap(string, int) map;
-    hashmap_init(string, int)(&map);
-
-    map.key_free = string_free;
-    map.key_init = string_init_no_return;
-    map.key_copy = string_copy;
-    map.key_hash = hash_string;
-    map.key_equals = string_equals;
-    //map->key_compare = string_compare;
-
-    string s;
-    string_init_from_cstr(&s, "Hello, World!");
-    string s2;
-    string_init_from_cstr(&s2, "Another example string.");
-    string s3;
-    string_init_from_cstr(&s3, "Not in the map.");
-
-    run_tests(&map, s, s2, s3);
-
-    if (!hashmap_remove(string, int)(&map, s)) {
-        printf("Didn't remove element.\n");
-    } else { printf("Removed element.\n"); }
-
-    run_tests(&map, s, s2, s3);
-
-    hashmap_free(string, int)(&map);
+    time_test_function(test_insert_or_assign);
+    time_test_function(test_insert);
+    time_test_function(test_count);
+    time_test_function(test_contains);
+    time_test_function(stress_test);
 }

@@ -144,6 +144,19 @@ void string_copy(string *lhs, string rhs) {
     }
 }
 
+const char *rand_cstr(const size_t size) {
+    char *ret = (char*) malloc(size * sizeof(char));
+    if (!ret) return NULL;
+    struct timeval _tval;
+    for (size_t i = 0; i < size; ++i) {
+        gettimeofday(&_tval, NULL);
+        srand(_tval.tv_usec * _tval.tv_sec);
+        const char c = (char) (rand() % 96 + 32);
+        ret[i] = c;
+    }
+    return ret;
+}
+
 # if 0
 int main(void) {
     string s;
@@ -216,8 +229,14 @@ int main(void) {
     string_init_from_cstr(&s, "This is a new s!");
     printf("new s: %s\n", s.buffer);
 
-    string copyee;
-    string_copy(&copyee, s);
-    printf("copyee contents: %s\n", copyee.buffer);
+//    string copyee;
+//    string_copy(&copyee, s);
+//    printf("copyee contents: %s\n", copyee.buffer);
+
+    const char* random; 
+    for (int i = 0; i < 10; ++i) {
+        random = rand_cstr(16);
+        printf("rand_cstr: %s\n", random);
+    }
 }
 #endif // main

@@ -52,12 +52,6 @@ void set_node_free_no_recurse(K_TYPE) (
         set(K_TYPE) *_set, 
         set_node(K_TYPE) *node);
 
-#define set_node_set_key(K) TOKENPASTE2(K, _set_node_set_key)
-void set_node_set_key(K_TYPE)(
-        set(K_TYPE) *_set, 
-        set_node(K_TYPE) *node, 
-        K_TYPE _key);
-
 #define set_init(K) TOKENPASTE2(K, _set_init)
 bool set_init(K_TYPE) (set(K_TYPE) *_set);
 
@@ -76,13 +70,30 @@ size_t set_count(K_TYPE) (set(K_TYPE) *_set, K_TYPE _key);
 #define set_erase(K) TOKENPASTE2(K, _set_erase)
 bool set_erase(K_TYPE) (set(K_TYPE) *_set, K_TYPE _key);
 
+#define _key_init(set, keyptr) \
+    if ((set)->key_init)             \
+        (set)->key_init((keyptr));
+
+#define _key_free(set, keyptr)     \
+    if ((set)->key_free)           \
+        (set)->key_free((keyptr));
+
+#define _key_copy(set, keyptr, _key)       \
+    if ((set)->key_copy)                   \
+        (set)->key_copy((keyptr), (_key)); \
+    else                                   \
+        *(keyptr) = (_key);
+
+#define _key_equals(set, lhs, rhs) ((set)->key_equals((lhs), (rhs)))
+#define _key_compare(set, lhs, rhs) ((set)->key_compare((lhs), (rhs)))
+
 void set_node_init(K_TYPE) (
         set(K_TYPE) *_set,
         set_node(K_TYPE) *node, 
         K_TYPE _key
 ) {
-    if (_set->key_init) _set->key_init(&node->key);
-    set_node_set_key(K_TYPE)(_set, node, _key);
+    _key_init(_set, &node->key)
+    _key_copy(_set, &node->key, _key)
     node->next = NULL;
 }
 
@@ -92,26 +103,13 @@ void set_node_free(K_TYPE) (
 ) {
     if (node->next) 
         set_node_free(K_TYPE)(_set, node->next);
-    if (_set->key_free) 
-        _set->key_free(&node->key);
-}
-
-void set_node_set_key(K_TYPE)(
-        set(K_TYPE) *_set, 
-        set_node(K_TYPE) *node, 
-        K_TYPE _key
-) { 
-    if (_set->key_copy) 
-        _set->key_copy(&node->key, _key);
-    else
-        node->key = _key;
+    _key_free(_set, &node->key)
 }
 
 void set_node_free_no_recurse(K_TYPE) (
         set(K_TYPE) *_set, 
         set_node(K_TYPE) *node) {
-    if (_set->key_free) 
-        _set->key_free(&node->key);
+    _key_free(_set, &node->key)
 }
 
 bool set_init(K_TYPE) (set(K_TYPE) *_set) 
@@ -143,8 +141,6 @@ void set_free(K_TYPE) (set(K_TYPE) *_set) {
     }
 }
 
-#define _key_equals(set, bucketptr, _key) (((set)->key_equals && (set)->key_equals((bucketptr)->key, (_key))) || ((bucketptr)->key == _key))
-
 bool set_insert(K_TYPE) (set(K_TYPE) *_set, K_TYPE _key) 
 {
     const unsigned long bucket = _set->key_hash(_key) % _set->capacity;
@@ -156,9 +152,8 @@ bool set_insert(K_TYPE) (set(K_TYPE) *_set, K_TYPE _key)
     } 
 
     set_node(K_TYPE) **bucketptrptr = &(_set->buckets[bucket]);
-
     do {
-        if (_key_equals(_set, *bucketptrptr, _key)) return true;
+        if (_key_equals(_set, (*bucketptrptr)->key, _key)) return true;
     } while ( *(bucketptrptr = &((*bucketptrptr)->next)) );
 
     *bucketptrptr = (set_node(K_TYPE) *) malloc(sizeof(set_node(K_TYPE)));
@@ -172,10 +167,10 @@ size_t set_count(K_TYPE) (set(K_TYPE) *_set, K_TYPE _key)
     const unsigned long bucket = _set->key_hash(_key) % _set->capacity;
     if (!_set->buckets[bucket]) return 0;
 
-    set_node(K_TYPE) **bucketptrptr = &(_set->buckets[bucket]);
+    set_node(K_TYPE) *bucketptr = _set->buckets[bucket];
     do {
-        if (_key_equals(_set, *bucketptrptr, _key)) return 1;
-    } while ( *(bucketptrptr = &((*bucketptrptr)->next)) );
+        if (_key_equals(_set, bucketptr->key, _key)) return 1;
+    } while ((bucketptr = bucketptr->next));
 
     return 0;
 }
@@ -185,8 +180,7 @@ bool set_contains(K_TYPE) (set(K_TYPE) *_set, K_TYPE _key)
     return set_count(K_TYPE)(_set, _key);
 }
 
-bool 
-set_erase(K_TYPE) (set(K_TYPE) *_set, K_TYPE _key)
+bool set_erase(K_TYPE) (set(K_TYPE) *_set, K_TYPE _key)
 {
     const unsigned long bucket = _set->key_hash(_key) % _set->capacity;
 
@@ -194,7 +188,7 @@ set_erase(K_TYPE) (set(K_TYPE) *_set, K_TYPE _key)
 
     set_node(K_TYPE) **bucketptrptr = &_set->buckets[bucket];
     do {
-        if (_key_equals(_set, *bucketptrptr, _key)) {
+        if (_key_equals(_set, (*bucketptrptr)->key, _key)) {
             if ((*bucketptrptr)->next) {
                 set_node(K_TYPE) *temp = (*bucketptrptr)->next;
                 set_node_free_no_recurse(K_TYPE)(_set, *bucketptrptr);
@@ -210,3 +204,9 @@ set_erase(K_TYPE) (set(K_TYPE) *_set, K_TYPE _key)
 
     return false;
 }
+
+#undef _key_init
+#undef _key_free
+#undef _key_copy
+#undef _key_compare
+#undef _key_equals
