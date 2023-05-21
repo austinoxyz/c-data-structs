@@ -1,2 +1,0 @@
-gcc my_vector.c -ggdb -o my_vector -Wall -Werror -Wextra \
-    -I. -I../util/include -I../working/include -L ../working/my_string.o

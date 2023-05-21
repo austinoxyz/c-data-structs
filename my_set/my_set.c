@@ -69,6 +69,6 @@ void stress_test() {
 }
 
 int main(void) {
-    time_test_function(simple_test);
-    time_test_function(stress_test);
+    time_function(simple_test);
+    time_function(stress_test);
 }

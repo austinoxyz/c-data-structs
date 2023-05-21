@@ -1,5 +1,4 @@
-#include <assert.h>
-#include <time.h>
+#include "test.h"
 
 #include "my_string.h"
 
@@ -20,18 +19,6 @@ unsigned long djb2(char *str) {
 
 unsigned long hash_string(string s) {
     return djb2(s.buffer);
-}
-
-#define strfy(x) #x
-
-#define time_test_function(test_func)                               \
-{                                                                   \
-    printf("Running test %s.\n", strfy(test_func));                 \
-    clock_t start = clock(), diff;                                  \
-    test_func();                                                    \
-    diff = clock() - start;                                         \
-    int ms = diff * 1000 / CLOCKS_PER_SEC;                          \
-    printf("Test completed in %d.%d seconds.\n", ms/1000, ms%1000); \
 }
 
 #define prepare_string_int_map(name) \
@@ -159,7 +146,6 @@ void stress_test(void) {
     prepare_string_int_map(_map)
 
     // one hundred thousand random strings
-    printf("Creating strings...\n\n");
     const size_t n_strings = 100000;
     string *random_strings = (string *) malloc(n_strings * sizeof(string));
     assert(random_strings);
@@ -171,7 +157,6 @@ void stress_test(void) {
         // why do this?
         const char *random_cstr = rand_cstr(17); 
         string_init_from_cstr(&random_strings[i], random_cstr);
-        string_total_bytes += random_strings[i].capacity * sizeof(char);
     }
 
     int _n_strings = n_strings;
@@ -188,9 +173,9 @@ void stress_test(void) {
 
 int main(void) 
 {
-    time_test_function(test_insert_or_assign);
-    time_test_function(test_insert);
-    time_test_function(test_count);
-    time_test_function(test_contains);
-    time_test_function(stress_test);
+    time_function(test_insert_or_assign);
+    time_function(test_insert);
+    time_function(test_count);
+    time_function(test_contains);
+    time_function(stress_test);
 }

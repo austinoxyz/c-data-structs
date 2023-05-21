@@ -1,2 +1,0 @@
-cp ../my_string/my_string.h include/
-cp ../my_string/my_string.o lib/

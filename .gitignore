@@ -19,3 +19,4 @@ working/
 
 cloc.sh
 cloc-with-test.sh
+clean.sh
