@@ -1,3 +1,5 @@
+#include "test.h"
+
 #include <assert.h>
 #include <time.h>
 
@@ -64,19 +66,6 @@ void stress_test() {
     assert(success);
     success = set_contains(int)(&_set, 100000);
     assert(!success);
-}
-
-#define strfy(x) #x
-
-// assumes test_func is type `void (*test_func)(void)`
-#define time_test_function(test_func)                       \
-{                                                           \
-    printf("Running test %s.\n", strfy(test_func));         \
-    clock_t start = clock(), diff;                          \
-    test_func();                                            \
-    diff = clock() - start;                                 \
-    int ms = diff * 1000 / CLOCKS_PER_SEC;                  \
-    printf("Test took %d.%d seconds.\n", ms/1000, ms%1000); \
 }
 
 int main(void) {

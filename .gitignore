@@ -12,5 +12,10 @@
 my_string/my_string
 my_vector/my_vector
 my_hashmap/my_hashmap
+my_set/my_set
 
 old/
+working/
+
+cloc.sh
+cloc-with-test.sh

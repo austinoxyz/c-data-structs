@@ -1,135 +1,165 @@
+#include "test.h"
+
 #define TYPE int
 #include "my_vector.h"
 #undef TYPE
 
-void free_int_vector(vector(int) *v) {
-    free(v->buffer);
-}
-
-typedef struct A {
-    char *buffer;
-} A;
-
-#define TYPE A
+#include "my_string.h"
+#define TYPE string
 #include "my_vector.h"
 #undef TYPE
 
-void init_A(A *a, size_t offset) {
-    a->buffer = (char *)malloc(26 * sizeof(char));
-    for (int i = 0; i < 26; ++i)
-        a->buffer[i] = 'a' + i + offset;
-    a->buffer[26] = '\0';
+bool int_equals(int lhs, int rhs) { return lhs == rhs; }
+
+#define prepare_int_vector(name, n)   \
+    vector(int) name;                 \
+    vector_init(int)(&(name));        \
+    name.elem_equals = int_equals;      \
+    for (size_t i = 0; i < n_ints; ++i) \
+        vector_push_back(int)(&vec, i);
+
+#define prepare_string_vector(name)   \
+    vector(string) name;              \
+    vector_init(string)(&(name));     \
+    name.elem_equals = string_equals; \
+    name.elem_copy = string_copy;
+
+
+void test_int_vector_init_and_free(void) {
+    vector(int) vec;
+    vector_init(int)(&vec);
+    vec.elem_equals = int_equals;
+    vector_free(int)(&vec);
 }
 
-void free_A(A *a) {
-    if (a->buffer != NULL) 
-        free(a->buffer);
-}
-
-void free_A_vector(vector(A) *v) {
-    if (v != NULL)
-        for (size_t i = 0; i < v->size; ++i)
-            free_A(&v->buffer[i]);
-}
-
-bool equals_A(A lhs, A rhs) {
-    return !strcmp(lhs.buffer, rhs.buffer);
-}
-
-#define RUN_TEST(x) do {              \
-    printf("Running %s...\n", #x);    \
-    x();                              \
-    printf("Completed %s.\n\n", #x);  \
-} while(0)
-
-void print_int_vector(vector(int) *v) {
-    for (size_t i = 0; i < v->size; ++i) {
-        const int n = vector_at(int)(v, i);
-        printf("%d, ", n);
-    }
-    printf("\n");
-}
-
-void print_A(A *a) {
-    printf("%s\n", a->buffer);
-}
-
-void print_A_vector(vector(A) *v) {
-    for (size_t i = 0; i < v->size; ++i) {
-        print_A(&v->buffer[i]);
-    }
-    printf("\n");
-}
-
-void test_int_vector() {
+void test_int_vector_resize(void) {
+    const size_t n_ints = INITIAL_VEC_CAP;
     bool success;
-    vector(int) v;
-    success = vector_init(int)(&v);
-    if (!success) exit(1);
-    else printf("int_vector initialized.\n");
 
-    for (int i = 0; i < 10; ++i) {
-        vector_push_back(int)(&v, i);
-    }
+    prepare_int_vector(vec, n_ints)
 
-    const size_t start = 2, end = v.size, range = end - start;
-    int *remove_buffer = vector_remove_range(int)(&v, start, end);
+    success = vector_resize(int)(&vec, 2 * vec.capacity);
+    assert(success);
 
-    print_int_vector(&v);
-
-    vector(int) removed_v;
-    success = vector_init_from(int)(&removed_v, remove_buffer, range);
-    if (!success) exit(1);
-    else printf("removed_v int_vector initialized.\n");
-    print_int_vector(&removed_v);
-
-    vector_free(int)(&v);
+    vector_free(int)(&vec);
 }
 
-const char *alphabet = "abcdefghijklmnopqrstuvwxyz";
-
-void test_A_vector() {
-    vector(A) v;
-    bool success = vector_init(A)(&v);
-    vector_set_free(A)(&v, free_A);
-    if (!success) exit(1);
-    else printf("A_vector initialized.\n");
-    printf("offsetof(A, buffer)=%zu\n", offsetof(A, buffer));
-
-    for (int i = 0; i < 5; ++i) {
-        A a; 
-        init_A(&a, i);
-        vector_push_back(A)(&v, a);
-    }
-
-    print_A_vector(&v);
-
-    const size_t start = 1, end = 1, range = end - start;
-    A *remove_buffer = vector_remove_range(A)(&v, start, end);
-
-    vector(A) removed_v;
-    success = vector_init_from(A)(&removed_v, remove_buffer, range);
-    if (!success) exit(1);
-    else printf("removed_v int_vector initialized.\n");
-    vector_set_free(A)(&v, free_A);
-    print_A_vector(&removed_v);
-
-    A alphabet_a;
-    alphabet_a.buffer = (char *) malloc (26 * sizeof(char));
-    memcpy(alphabet_a.buffer, alphabet, 26 * sizeof(char));
-
-    const int res = vector_find(A)(&v, alphabet_a, equals_A);
-    printf("Find result: %d\n", res);
-
-    vector_free(A)(&v);
-    vector_free(A)(&removed_v);
-    free_A(&alphabet_a);
-    printf("A_vector freed.\n");
+void test_int_vector_push_back(void) {
+    const size_t n_ints = 10;
+    prepare_int_vector(vec, n_ints)
+    for (size_t i = 0; i < n_ints; ++i)
+        vector_push_back(int)(&vec, i);
+    vector_free(int)(&vec);
 }
 
-#if 1
+void test_int_vector_at(void) {
+    const size_t n_ints = 10;
+    bool success;
+    int d;
+
+    prepare_int_vector(vec, n_ints)
+
+    for (size_t i = 0; i < n_ints; ++i) {
+        success = vector_at(int)(&vec, i, &d);
+        assert(success);
+        assert((size_t) d == i);
+    }
+    assert(vec.size == n_ints);
+
+    vector_free(int)(&vec);
+}
+
+void test_int_vector_pop_back(void) {
+    const size_t n_ints = 10;
+    bool success;
+    int d;
+
+    prepare_int_vector(vec, n_ints)
+
+    for (size_t i = 0; i < n_ints; ++i) {
+        success = vector_pop_back(int)(&vec, &d);
+        assert(success);
+        assert((size_t) d == n_ints - i - 1);
+    }
+
+    vector_free(int)(&vec);
+}
+
+void test_int_vector_remove(void) {
+    const size_t n_ints = 10;
+    bool success;
+    int d;
+
+    prepare_int_vector(vec, n_ints)
+
+    success = vector_remove(int)(&vec, 0);
+    assert(success);
+    success = vector_at(int)(&vec, 0, &d);
+    assert((size_t) d == 1);
+    assert(vec.size == n_ints - 1);
+
+    const size_t second_idx = 3;
+    success = vector_remove(int)(&vec, 3);
+    assert(success);
+    success = vector_at(int)(&vec, second_idx, &d);
+    assert((size_t) d == second_idx + 2);
+    assert(vec.size == n_ints - 2);
+
+    success = vector_remove(int)(&vec, vec.size - 1);
+    assert(success);
+    success = vector_at(int)(&vec, vec.size - 1, &d);
+    assert((size_t) d == n_ints - 2);
+    assert(vec.size == n_ints - 3);
+
+    vector_free(int)(&vec);
+}
+
+void stress_test_int_vector(void) {
+    const size_t n_ints = 10000;
+    bool success;
+
+    prepare_int_vector(vec, n_ints)
+
+    success = vector_resize(int)(&vec, (size_t) n_ints);
+    assert(success);
+
+    for (int i = 0; i < (int) n_ints; ++i) 
+        vector_push_back(int)(&vec, i);
+
+    assert(vec.size == n_ints);
+
+    vector_free(int)(&vec);
+}
+
+void test_string_vector_push_back(void) {
+    prepare_string_vector(vec)
+    const size_t n_cstrings = 10;
+    bool success;
+
+    for (size_t i = 0; i < n_cstrings; ++i) {
+        string s;
+        string_init_from_cstr(&s, rand_cstr(15));
+        vector_push_back(string)(&vec, s);
+        string_free(&s);
+    }
+
+    for (size_t i = 0; i < n_cstrings; ++i) {
+        string s;
+        string_init(&s);
+        success = vector_at(string)(&vec, i, &s);
+        assert(success);
+        string_free(&s);
+    }
+
+    vector_free(string)(&vec);
+}
+
 int main(void) {
-    RUN_TEST(test_int_vector);
-    RUN_TEST(test_A_vector);
+    time_function(test_int_vector_push_back);
+    time_function(test_int_vector_at);
+    time_function(test_int_vector_pop_back);
+    time_function(test_int_vector_remove);
+    time_function(stress_test_int_vector);
+
+    time_function(test_string_vector_push_back);
 }
-#endif // main

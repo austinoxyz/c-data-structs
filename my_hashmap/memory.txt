@@ -1,2 +1,0 @@
-assume string s;
-total_sizeof s = 2 * sizeof(size_t) + sizeof(ptr) + s.capacity * sizeof(char)
