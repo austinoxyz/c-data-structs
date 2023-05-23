@@ -1,5 +1,5 @@
-#ifndef _MY_STRING__
-#define _MY_STRING__
+#ifndef MY_STRING_
+#define MY_STRING_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,4 +52,4 @@ void string_copy(string *lhs, string rhs);
 
 const char *rand_cstr(const size_t size);
 
-#endif // _MY_STRING__
+#endif // MY_STRING_

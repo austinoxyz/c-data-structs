@@ -1,9 +1,6 @@
 **/a.out
 **/core
 
-**/include/
-**/lib/
-
 **/eval_preproc
 **/test_build.sh
 **/.vimspector.json
@@ -20,3 +17,5 @@ working/
 cloc.sh
 cloc-with-test.sh
 clean.sh
+
+test/scratch/

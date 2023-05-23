@@ -4,7 +4,7 @@
 #ifndef _VEC_MACROS__
 #define _VEC_MACROS__
 
-#define VEC_BLOCK_SIZE (32)
+#define VEC_BLOCK_SIZE (16)
 #define NEXT_CAPACITY_UP(curr) ((VEC_BLOCK_SIZE) * (((curr) / (VEC_BLOCK_SIZE)) + 1))
 #define INITIAL_VEC_CAP (VEC_BLOCK_SIZE)
 
@@ -108,6 +108,9 @@ bool vector_init_from(TYPE) (vector(TYPE) *vec, TYPE *_src_buffer, const size_t 
 }
 
 void vector_push_back(TYPE) (vector(TYPE) *vec, TYPE _elem) {
+    if (vec->size == vec->capacity 
+        && !(vector_resize(TYPE)(vec, vec->capacity + VEC_BLOCK_SIZE)) ) 
+        return;
     _elem_init(vec, &vec->buffer[vec->size])
     _elem_copy(vec, &vec->buffer[vec->size], _elem)
     vec->size++;
