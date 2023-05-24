@@ -2,6 +2,8 @@
 
 set -xe
 
+cd ~/Code/c-data-structs/test
+
 [ -d ./build ] && rm -r ./build
 mkdir build
 
@@ -27,3 +29,7 @@ build_test my_hashmap &&
 ./build/my_set_test      &&
 
 echo "all tests completed succesfully."
+
+rm -r build
+
+cd -
