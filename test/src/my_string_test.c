@@ -1,4 +1,6 @@
-#include <my_string.h>
+#include "util/test.h"
+
+#include "my_string.h"
 
 int main(void) {
     string s;

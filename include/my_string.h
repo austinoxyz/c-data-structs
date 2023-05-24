@@ -28,11 +28,11 @@ string new_string();
 bool string_increase_capacity(string* s, const size_t new_cap);
 
 bool string_init_with_capacity(string *s, const size_t start_cap);
+bool string_init_unallocated(string *s);
 bool string_init(string* s);
+void string_init_no_return(string *s);
 bool string_init_from_cstr(string* s, const char* cs);
 bool string_init_from_string(string* s, string* s2);
-
-void string_init_no_return(string *s);
 
 bool string_clear(string* s);
 
@@ -50,6 +50,6 @@ bool string_replace_contents_string(string* s, string* s2, const size_t count);
 bool string_equals(string lhs, string rhs);
 void string_copy(string *lhs, string rhs);
 
-const char *rand_cstr(const size_t size);
+char *rand_cstr(const size_t size);
 
 #endif // MY_STRING_

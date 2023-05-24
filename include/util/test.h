@@ -1,8 +1,8 @@
 #ifndef _TEST_H__
 #define _TEST_H__
 
-#include "time.h"
-#include "assert.h"
+#include <time.h>
+#include <assert.h>
 
 #define strfy(x) #x
 

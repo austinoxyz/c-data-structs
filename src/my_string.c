@@ -8,10 +8,12 @@ size_t my_strlen(const char *s) {
 
 bool string_init_with_capacity(string *s, const size_t start_cap) {
     s->capacity = start_cap;
+    s->size = 0;
+    if (start_cap == 0) 
+        return true;
     s->buffer = (char *) malloc(s->capacity * sizeof(char));
     if (s->buffer == NULL) 
         return false;
-    s->size = 0;
     return true;
 }
 
@@ -24,6 +26,10 @@ bool string_init_from_cstr(string* s, const char* cs) {
     strncpy(&s->buffer[0], &cs[0], s->size);
     memset(&s->buffer[s->size], '\0', s->capacity - s->size);
     return true;
+}
+
+bool string_init_unallocated(string *s) {
+    return string_init_with_capacity(s, 0);
 }
 
 bool string_init_from_string(string* s, string* s2) {
@@ -129,17 +135,26 @@ bool string_equals(string lhs, string rhs) {
     return !strcmp(lhs.buffer, rhs.buffer);
 }
 
+//void string_copy(string *lhs, string rhs) {
+//    if (lhs->buffer == NULL) {
+//        string_init_from_string(lhs, &rhs);
+//    } else {
+//        if (lhs->capacity < rhs.size)
+//            string_increase_capacity(lhs, rhs.capacity);
+//        strncpy(lhs->buffer, rhs.buffer, rhs.capacity);
+//        lhs->capacity = rhs.capacity;
+//        lhs->size = rhs.size;
+//    }
+//}
+
 void string_copy(string *lhs, string rhs) {
-    if (lhs->buffer == NULL) {
-        string_init_from_string(lhs, &rhs);
-    } else {
-        if (lhs->capacity < rhs.size)
-            string_increase_capacity(lhs, rhs.capacity);
-        memcpy(lhs->buffer, rhs.buffer, rhs.capacity * sizeof(char));
-    }
+    lhs->size = rhs.size;
+    lhs->capacity = rhs.capacity;
+    lhs->buffer = (char *) malloc(lhs->capacity * sizeof(char));
+    strncpy(lhs->buffer, rhs.buffer, rhs.capacity);
 }
 
-const char *rand_cstr(const size_t size) {
+char *rand_cstr(const size_t size) {
     char *ret = (char*) malloc(size * sizeof(char));
     if (!ret) return NULL;
     struct timeval _tval;

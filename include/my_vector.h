@@ -1,5 +1,5 @@
-#include "includestd.h"
-#include "tokenpaste.h"
+#include "util/includestd.h"
+#include "util/tokenpaste.h"
 
 #ifndef _VEC_MACROS__
 #define _VEC_MACROS__
