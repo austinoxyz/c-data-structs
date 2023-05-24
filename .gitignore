@@ -1,5 +1,5 @@
 .gitignore
 lib/
-
+test/build
 scratch/
 old/
