@@ -5,3 +5,11 @@ test/.vimspector.json
 test/my_string_test2.sh
 scratch/
 old/
+
+core
+**/core
+**/**/core
+
+a.out
+**/a.out
+**/**/a.out
