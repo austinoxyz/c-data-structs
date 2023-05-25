@@ -2,6 +2,8 @@
 
 set -xe
 
+cd ~/Code/c-data-structs
+
 warnings="-Wall -Wextra -Werror"
 includes="-Iinclude"
 build_dir="lib"
@@ -19,3 +21,5 @@ build() {
 build my_string
 
 echo "all builds completed succesfully."
+ 
+cd -

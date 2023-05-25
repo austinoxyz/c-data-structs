@@ -47,6 +47,7 @@ void string_init_no_return(string *s) {
 void string_free(string* s) {
     if (s->buffer != NULL) {
         free(s->buffer);
+        s->buffer = NULL;
     }
     s->size = 0;
     s->capacity = 0;
@@ -72,8 +73,8 @@ bool string_push_back_c(string* s, const char c) {
     {
         return false;
     }
-    s->buffer[s->size++] = c;
-    s->buffer[s->size] = '\0';
+    s->buffer[s->size] = c;
+    s->buffer[++s->size] = '\0';
     return true;
 }
 

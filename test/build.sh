@@ -13,7 +13,7 @@ objs="../lib/my_string.o"
 #  - name (i.e. "my_string")
 build_test() {
     name="$1_test"
-    gcc -o "build/$name" "src/$name.c" $warnings $includes "$objs"
+    gcc -ggdb -o "build/$name" "src/$name.c" $warnings $includes $objs
 }
 
 build_test my_string  && 

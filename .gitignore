@@ -1,5 +1,7 @@
 .gitignore
 lib/
 test/build
+test/.vimspector.json
+test/my_string_test2.sh
 scratch/
 old/
