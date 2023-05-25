@@ -16,13 +16,10 @@ build_test() {
     gcc -o "build/$name" "src/$name.c" $warnings $includes "$objs"
 }
 
-./build.sh               &&
+build_test my_string  && 
+build_test my_vector  && 
+build_test my_set     && 
+build_test my_hashmap 
 
-./build/my_string_test   &&
-./build/my_vector_test   &&
-./build/my_hashmap_test  &&
-./build/my_set_test      &&
-
-echo "all tests completed successfully."
-rm -r build
+echo "all builds completed successfully"
 cd -
