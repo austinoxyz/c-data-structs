@@ -21,31 +21,65 @@ typedef struct string {
     char *buffer;
 } string;
 
-void string_free(string* s);
-
-string new_string();
-
-bool string_increase_capacity(string* s, const size_t new_cap);
-
 bool string_init_with_capacity(string *s, const size_t start_cap);
 bool string_init_unallocated(string *s);
 bool string_init(string* s);
 void string_init_no_return(string *s);
+
+#define string_init_from(a, b)                 \
+    _Generic ((b),                             \
+            string: string_init_from_string,   \
+            char*: string_init_from_cstr,      \
+            const char*: string_init_from_cstr \
+    )((a), (b))
+
 bool string_init_from_cstr(string* s, const char* cs);
-bool string_init_from_string(string* s, string* s2);
+bool string_init_from_string(string* s, string s2);
+
+void string_free(string* s);
+
+bool string_resize(string* s, const size_t new_cap);
 
 bool string_clear(string* s);
+
+#define string_push_back(a, b)                 \
+    _Generic ((b),                             \
+            int: string_push_back_c,           \
+            char: string_push_back_c,          \
+            string: string_push_back_string,   \
+            char*: string_push_back_cstr,      \
+            const char*: string_push_back_cstr \
+    )((a), (b))
 
 bool string_push_back_c(string* s, const char c);
 bool string_push_back_cstr(string* s, const char *s2);
 bool string_push_back_string(string* s, string* s2);
 
-bool string_replace_c(string* s, const char c, size_t idx);
-bool string_replace_cstr(string* s, const char* s2, const size_t start, const size_t count);
-bool string_replace_string(string* s, string* s2, const size_t start, const size_t count);
+#define string_replace(a, b, c, d)            \
+    _Generic ((b),                            \
+            int: string_replace_c,            \
+            char: string_replace_c,           \
+            string: string_replace_string,    \
+            char*: string_replace_cstr,       \
+            const char*: string_replace_cstr  \
+    )((a), (b), (c), (d))
 
+bool string_replace_c(string* s, const char c, const size_t start, const size_t count);
+bool string_replace_cstr(string* s, const char* s2, const size_t start, const size_t count);
+bool string_replace_string(string* s, string s2, const size_t start, const size_t count);
+
+#define string_replace_contents(a, b, c)              \
+    _Generic ((b),                                    \
+            int: string_replace_contents_c,           \
+            char: string_replace_contents_c,          \
+            string: string_replace_contents_string,   \
+            char*: string_replace_contents_cstr,      \
+            const char*: string_replace_contents_cstr \
+    )((a), (b), (c))
+
+bool string_replace_contents_c(string* s, const char c, const size_t count);
 bool string_replace_contents_cstr(string* s, const char* s2, const size_t count);
-bool string_replace_contents_string(string* s, string* s2, const size_t count);
+bool string_replace_contents_string(string* s, string s2, const size_t count);
 
 bool string_equals(string lhs, string rhs);
 void string_copy(string *lhs, string rhs);
