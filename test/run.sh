@@ -1,6 +1,6 @@
 #!/bin/sh
 set -xe
-cd ~/code/c-data-structs/test
+cd "./test"
 
 [ -d ./build ] && rm -r ./build
 mkdir build
