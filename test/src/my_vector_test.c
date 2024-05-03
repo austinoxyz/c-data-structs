@@ -33,9 +33,17 @@ void setup_for_string(void) {
     equals_func(string) = string_equals;
 }
 
+void cleanup(void) {
+    free(vec_data(int));
+    for (size_t i = 0; i < vec_data_size(string); ++i)
+        string_free( &vec_data(string)[i] );
+    free(vec_data(string));
+}
+
 int main(void) {
     setup_for_int();
     setup_for_string();
     run_tests_for(int)();
     run_tests_for(string)();
+    cleanup();
 }

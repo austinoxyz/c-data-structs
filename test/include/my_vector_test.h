@@ -3,16 +3,16 @@
 #include "my_vector.h"
 
 // vec_data requires atleast 32 elements. (2 * INITIAL_VEC_CAP)
-#define vec_data(T) TOKENPASTE2(T, _vec_data)
-#define vec_data_size(T) TOKENPASTE2(T, _vec_data_size)
+#define vec_data(T) PASTE2(T, _vec_data)
+#define vec_data_size(T) PASTE2(T, _vec_data_size)
 
 static TYPE *vec_data(TYPE) = NULL;
 static size_t vec_data_size(TYPE) = 0;
 
-#define init_func(T) TOKENPASTE2(T, _init_func)
-#define free_func(T) TOKENPASTE2(T, _free_func)
-#define copy_func(T) TOKENPASTE2(T, _copy_func)
-#define equals_func(T) TOKENPASTE2(T, _equals_func)
+#define init_func(T) PASTE2(T, _init_func)
+#define free_func(T) PASTE2(T, _free_func)
+#define copy_func(T) PASTE2(T, _copy_func)
+#define equals_func(T) PASTE2(T, _equals_func)
 
 static void (*init_func(TYPE))(TYPE *_elem)          = NULL;
 static void (*free_func(TYPE))(TYPE  *_elem)         = NULL;
@@ -40,16 +40,14 @@ static bool (*equals_func(TYPE))(TYPE lhs, TYPE rhs) = NULL;
     for (size_t i = 0; i < (n_elems); ++i)   \
         vector_push_back(TYPE)(&(name), vec_data(TYPE)[i]);
 
-#define test_vector_init_and_free(T) TOKENPASTE3(test_vector_, T, _init_and_free)
-void test_vector_init_and_free(TYPE)(void);
+#define test_vector_init_and_free(T) PASTE3(test_vector_, T, _init_and_free)
 void test_vector_init_and_free(TYPE)(void) {
     vector(TYPE) vec;
     vector_init(TYPE)(&vec);
     vector_free(TYPE)(&vec);
 }
 
-#define test_vector_resize(T) TOKENPASTE3(test_vector_, T, _resize)
-void test_vector_resize(TYPE)(void);
+#define test_vector_resize(T) PASTE3(test_vector_, T, _resize)
 void test_vector_resize(TYPE)(void) {
     const size_t n_elems = INITIAL_VEC_CAP;
 
@@ -61,8 +59,7 @@ void test_vector_resize(TYPE)(void) {
     vector_free(TYPE)(&vec);
 }
 
-#define test_vector_push_back_and_at(T) TOKENPASTE3(test_vector_, T, _push_back_and_at)
-void test_vector_push_back_and_at(TYPE)(void);
+#define test_vector_push_back_and_at(T) PASTE3(test_vector_, T, _push_back_and_at)
 void test_vector_push_back_and_at(TYPE)(void) {
     const size_t n_elems = 10;
     prepare_empty_vector(vec)
@@ -80,15 +77,13 @@ void test_vector_push_back_and_at(TYPE)(void) {
         success = vector_at(TYPE)(&vec, i, &retrieved);
         assert(success);
         TYPE target = vec_data(TYPE)[i];
-        success = equals_func(TYPE)(target, retrieved);
-        assert( success ); //        assert( equals_func(TYPE)(target, retrieved) );
+        assert( equals_func(TYPE)(target, retrieved) );
     }
 
     vector_free(TYPE)(&vec);
 }
 
-#define test_vector_push_back_and_at_with_resize(T) TOKENPASTE3(test_vector_, T, _push_back_and_at_with_resize)
-void test_vector_push_back_and_at_with_resize(TYPE)(void);
+#define test_vector_push_back_and_at_with_resize(T) PASTE3(test_vector_, T, _push_back_and_at_with_resize)
 void test_vector_push_back_and_at_with_resize(TYPE)(void) {
     // resize is called within call to vector_push_back(TYPE)
     const size_t n_elems = 2 * INITIAL_VEC_CAP;
@@ -111,8 +106,7 @@ void test_vector_push_back_and_at_with_resize(TYPE)(void) {
     vector_free(TYPE)(&vec);
 }
 
-#define test_vector_pop_back(T) TOKENPASTE3(test_vector_, T, _pop_back)
-void test_vector_pop_back(TYPE)(void);
+#define test_vector_pop_back(T) PASTE3(test_vector_, T, _pop_back)
 void test_vector_pop_back(TYPE)(void) {
     const size_t n_elems = 10;
     prepare_filled_vector(vec, n_elems)
@@ -128,8 +122,7 @@ void test_vector_pop_back(TYPE)(void) {
     vector_free(TYPE)(&vec);
 }
 
-#define test_vector_remove(T) TOKENPASTE3(test_vector_, T, _remove)
-void test_vector_remove(TYPE)(void);
+#define test_vector_remove(T) PASTE3(test_vector_, T, _remove)
 void test_vector_remove(TYPE)(void) {
     const size_t n_elems = 10;
     prepare_filled_vector(vec, n_elems)
@@ -159,8 +152,7 @@ void test_vector_remove(TYPE)(void) {
 }
 
 #if 1
-#define run_tests_for(T) TOKENPASTE3(run_, T, _tests)
-void run_tests_for(TYPE)(void);
+#define run_tests_for(T) PASTE3(run_, T, _tests)
 void run_tests_for(TYPE)(void) {
     time_function(test_vector_init_and_free(TYPE));
     time_function(test_vector_resize(TYPE));

@@ -8,34 +8,21 @@
 #undef K_TYPE
 #undef V_TYPE
 
-// http://www.cse.yorku.ca/~oz/hash.html
-unsigned long djb2(char *str) {
-    unsigned long hash = 5381;
-    int c;
-    while ((c = *str++))
-        hash = ((hash << 5) + hash) + c;
-    return hash;
-}
-
-unsigned long hash_string(string s) {
-    return djb2(s.buffer);
-}
-
 #define prepare_string_int_map(name) \
     map(string, int) _map;                 \
     map_init(string, int)(&_map);          \
     _map.key_free = string_free;           \
     _map.key_init = string_init_no_return; \
     _map.key_copy = string_copy;           \
-    _map.key_hash = hash_string;           \
+    _map.key_hash = string_hash;           \
     _map.key_equals = string_equals;
 
 #define prepare_strings() \
-    string s;                                              \
-    string_init_from_cstr(&s, "Hello, World!");            \
-    string s2;                                             \
-    string_init_from_cstr(&s2, "FooBar"); \
-    string s3;                                             \
+    string s;                                      \
+    string_init_from_cstr(&s, "Hello, World!");    \
+    string s2;                                     \
+    string_init_from_cstr(&s2, "FooBar");          \
+    string s3;                                     \
     string_init_from_cstr(&s3, "Unladen Swallow");
     
 void test_insert_or_assign(void) {
@@ -151,16 +138,12 @@ void stress_test(void) {
     assert(random_strings);
 
     for (size_t i = 0; i < n_strings; ++i) {
-        // FIXME setting size of rand_cstr to 16 causes the error 
-        // `my_hashmap: malloc.c:2379: sysmalloc: Assertion `(old_top == initial_top (av) && old_size == 0) || ((unsigned long) (old_size) >= MINSIZE && prev_inuse (old_top) && ((unsigned long) old_end & (pagesize - 1)) == 0)' failed.`
-        // later on in string_int_map_insert
-        // why do this?
-        const char *random_cstr = rand_cstr(17); 
+        char *random_cstr = rand_cstr(16); 
         string_init_from_cstr(&random_strings[i], random_cstr);
+        free(random_cstr);
     }
 
-    int _n_strings = n_strings;
-    for (int i = 0; i < _n_strings; ++i) {
+    for (int i = 0; i < (int) n_strings; ++i) {
         success = map_insert(string, int)(&_map, random_strings[i], i);
         assert(success);
     }

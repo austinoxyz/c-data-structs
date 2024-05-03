@@ -38,6 +38,8 @@ bool string_init_from_string(string* s, string s2);
 
 void string_free(string* s);
 
+void string_copy(string *lhs, string rhs);
+
 bool string_resize(string* s, const size_t new_cap);
 
 bool string_clear(string* s);
@@ -82,7 +84,9 @@ bool string_replace_contents_cstr(string* s, const char* s2, const size_t count)
 bool string_replace_contents_string(string* s, string s2, const size_t count);
 
 bool string_equals(string lhs, string rhs);
-void string_copy(string *lhs, string rhs);
+int string_compare(string lhs, string rhs);
+
+unsigned long string_hash(string s);
 
 char *rand_cstr(const size_t size);
 

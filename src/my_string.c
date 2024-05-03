@@ -53,6 +53,14 @@ void string_free(string* s) {
     s->capacity = 0;
 }
 
+void string_copy(string *lhs, string rhs) {
+    lhs->size = rhs.size;
+    lhs->capacity = rhs.capacity;
+    lhs->buffer = (char *) malloc(lhs->capacity * sizeof(char));
+    strncpy(lhs->buffer, rhs.buffer, rhs.capacity);
+}
+
+
 bool string_clear(string* s) {
     s->size = 0;
     s->buffer[0] = '\0';
@@ -172,11 +180,20 @@ bool string_equals(string lhs, string rhs) {
     return !strcmp(lhs.buffer, rhs.buffer);
 }
 
-void string_copy(string *lhs, string rhs) {
-    lhs->size = rhs.size;
-    lhs->capacity = rhs.capacity;
-    lhs->buffer = (char *) malloc(lhs->capacity * sizeof(char));
-    strncpy(lhs->buffer, rhs.buffer, rhs.capacity);
+int string_compare(string lhs, string rhs) {
+    return strcmp(lhs.buffer, rhs.buffer);
+}
+
+unsigned long djb2(char *str) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c;
+    return hash;
+}
+
+unsigned long string_hash(string s) {
+    return djb2(s.buffer);
 }
 
 char *rand_cstr(const size_t size) {

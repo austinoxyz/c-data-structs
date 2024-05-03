@@ -1,8 +1,14 @@
+
 .gitignore
 lib/
+
+.ccls
+.ccls-cache/
+
 test/build
-test/.vimspector.json
-test/my_string_test2.sh
+
+test/my_set_test2.sh
+
 scratch/
 old/
 
@@ -13,3 +19,7 @@ core
 a.out
 **/a.out
 **/**/a.out
+
+.vimspector.json
+**/.vimspector.json
+**/**/.vimspector.json

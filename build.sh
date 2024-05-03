@@ -2,8 +2,6 @@
 
 set -xe
 
-cd ~/Code/c-data-structs
-
 warnings="-Wall -Wextra -Werror"
 includes="-Iinclude"
 build_dir="lib"
@@ -15,11 +13,9 @@ mkdir $build_dir
 #  - name (i.e. "my_string")
 build() {
     name="$1"
-    gcc -c -o "lib/$name.o" "src/$name.c" $warnings $includes
+    gcc -std=c17 -c -o "lib/$name.o" "src/$name.c" $warnings $includes
 }
 
 build my_string
 
 echo "all builds completed succesfully."
- 
-cd -

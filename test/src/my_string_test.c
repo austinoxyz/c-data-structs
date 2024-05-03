@@ -242,6 +242,13 @@ void init_ref_strings(void) {
     string_init_from(&ref_s4, "Hey, sometimes your opponent is just having a really good day.");
 }
 
+void cleanup(void) {
+    string_free(&ref_s1);
+    string_free(&ref_s2);
+    string_free(&ref_s3);
+    string_free(&ref_s4);
+}
+
 int main(void) {
     time_function(test_string_init_and_free);
     time_function(test_string_init_from);
@@ -251,5 +258,7 @@ int main(void) {
     time_function(test_string_push_back);
     time_function(test_string_replace);
     time_function(test_string_replace_contents);
+
+    cleanup();
 }
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 set -xe
-cd ~/Code/c-data-structs/test
+cd ~/code/c-data-structs/test
 
 [ -d ./build ] && rm -r ./build
 mkdir build
@@ -15,7 +15,7 @@ objs="../lib/my_string.o"
 #  - name (i.e. "my_string")
 build_test() {
     name="$1_test"
-    gcc -o "build/$name" "src/$name.c" $warnings $includes $objs
+    gcc -std=c17 -o "build/$name" "src/$name.c" $warnings $includes $objs
 }
 
 alias finish_and_cleanup="echo all tests completed successfully.;rm -r build;cd -; exit 0"
@@ -31,7 +31,7 @@ build_test my_hashmap &&
 
 ./build/my_string_test   &&
 ./build/my_vector_test   &&
-./build/my_hashmap_test  &&
 ./build/my_set_test      &&
+./build/my_hashmap_test  &&
 
 finish_and_cleanup

@@ -10,7 +10,7 @@
 
 #endif // _VEC_MACROS__
 
-#define vector(T) TOKENPASTE2(T, _vector)
+#define vector(T) PASTE2(T, _vector)
 struct vector(TYPE) {
     size_t size;
     size_t capacity;
@@ -24,35 +24,35 @@ struct vector(TYPE) {
 
 typedef struct vector(TYPE) vector(TYPE);
 
-#define vector_resize(T) TOKENPASTE2(T, _vector_resize)
+#define vector_resize(T) PASTE2(T, _vector_resize)
 bool vector_resize(TYPE) (vector(TYPE) *vec, const size_t new_cap);
 
-#define vector_at(T) TOKENPASTE2(T, _vector_at)
+#define vector_at(T) PASTE2(T, _vector_at)
 bool vector_at(TYPE) (vector(TYPE) *vec, const size_t idx, TYPE *_elem_retval);
 
-#define vector_free(T) TOKENPASTE2(T, _vector_free)
+#define vector_free(T) PASTE2(T, _vector_free)
 void vector_free(TYPE) (vector(TYPE) *vec);
 
-#define vector_init(T) TOKENPASTE2(T, _vector_init)
+#define vector_init(T) PASTE2(T, _vector_init)
 bool vector_init(TYPE) (vector(TYPE) *vec);
 
-#define vector_init_from(T) TOKENPASTE2(T, _vector_init_from)
+#define vector_init_from(T) PASTE2(T, _vector_init_from)
 bool vector_init_from(TYPE) (vector(TYPE) *vec, TYPE *buf, const size_t size);
 
-#define vector_push_back(T) TOKENPASTE2(T, _vector_push_back)
+#define vector_push_back(T) PASTE2(T, _vector_push_back)
 void vector_push_back(TYPE) (vector(TYPE) *vec, TYPE element);
 
-#define vector_pop_back(T) TOKENPASTE2(T, _vector_pop_back)
+#define vector_pop_back(T) PASTE2(T, _vector_pop_back)
 bool vector_pop_back(TYPE) (vector(TYPE) *vec, TYPE *_elem_retval);
 
-#define vector_remove(T) TOKENPASTE2(T, _vector_remove)
+#define vector_remove(T) PASTE2(T, _vector_remove)
 bool vector_remove(TYPE) (vector(TYPE) *vec, const size_t pos);
 
 //// returns an array of TYPE and is the duty of user to free this
-//#define vector_remove_range(T) TOKENPASTE2(T, _vector_remove_range)
+//#define vector_remove_range(T) PASTE2(T, _vector_remove_range)
 //TYPE* vector_remove_range(TYPE) (vector(TYPE) *vec, const size_t start, const size_t end);
 
-#define vector_find(T) TOKENPASTE2(T, _vector_find)
+#define vector_find(T) PASTE2(T, _vector_find)
 int vector_find(TYPE) (vector(TYPE) *vec, TYPE target);
 
 #define _elem_init(vec, elemptr)     \

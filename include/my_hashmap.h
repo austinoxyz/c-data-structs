@@ -13,7 +13,7 @@
 
 #endif // _MAP_MACROS__
 
-#define map_node(K, E) TOKENPASTE4(K, _, E, _map_node)
+#define map_node(K, E) PASTE4(K, _, E, _map_node)
 struct map_node(K_TYPE, V_TYPE) {
     K_TYPE key;
     V_TYPE value;
@@ -21,7 +21,7 @@ struct map_node(K_TYPE, V_TYPE) {
 };
 typedef struct map_node(K_TYPE, V_TYPE) map_node(K_TYPE, V_TYPE);
 
-#define map(K, E) TOKENPASTE4(K, _, E, _map)
+#define map(K, E) PASTE4(K, _, E, _map)
 struct map(K_TYPE, V_TYPE) {
     size_t size;
     size_t capacity;
@@ -31,7 +31,7 @@ struct map(K_TYPE, V_TYPE) {
     void (*key_init)(K_TYPE *_key);
     void (*key_free)(K_TYPE *_key);
     void (*key_copy)(K_TYPE *lhs, K_TYPE rhs);
-    bool (*key_compare)(K_TYPE *lhs, K_TYPE *rhs);
+    int (*key_compare)(K_TYPE *lhs, K_TYPE *rhs);
     bool (*key_equals)(K_TYPE lhs, K_TYPE rhs);
     unsigned long (*key_hash)(K_TYPE key);
 
@@ -41,128 +41,125 @@ struct map(K_TYPE, V_TYPE) {
 };
 typedef struct map(K_TYPE, V_TYPE) map(K_TYPE, V_TYPE);
 
-#define map_node_init(K, E) TOKENPASTE4(K, _, E, _map_node_init)
+#define map_node_init(K, E) PASTE4(K, _, E, _map_node_init)
 void map_node_init(K_TYPE, V_TYPE) (
         map(K_TYPE, V_TYPE) *map, 
         map_node(K_TYPE, V_TYPE) *node, 
         K_TYPE _key, 
         V_TYPE _value);
 
-#define map_node_new(K, E) TOKENPASTE4(K, _, E, _map_node_new)
-map_node(K_TYPE, V_TYPE) *map_node_new(K_TYPE, V_TYPE) ();
+#define map_init(K, E) PASTE4(K, _, E, _map_init)
+void map_init(K_TYPE, V_TYPE) (map(K_TYPE, V_TYPE) *_map);
 
-#define map_init(K, E) TOKENPASTE4(K, _, E, _map_init)
-bool map_init(K_TYPE, V_TYPE) (map(K_TYPE, V_TYPE) *_map);
-
-#define map_free(K, E) TOKENPASTE4(K, _, E, _map_free)
+#define map_free(K, E) PASTE4(K, _, E, _map_free)
 void map_free(K_TYPE, V_TYPE) (map(K_TYPE, V_TYPE) *_map);
 
-#define map_node_free(K, E) TOKENPASTE4(K, _, E, _map_node_free)
+#define map_node_free(K, E) PASTE4(K, _, E, _map_node_free)
 void 
 map_node_free(K_TYPE, V_TYPE) (
         map(K_TYPE, V_TYPE) *_map, 
         map_node(K_TYPE, V_TYPE) *node);
 
-#define map_node_free_no_recurse(K, E) TOKENPASTE4(K, _, E, _map_node_free_no_recurse)
+#define map_node_free_no_recurse(K, E) PASTE4(K, _, E, _map_node_free_no_recurse)
 void 
 map_node_free_no_recurse(K_TYPE, V_TYPE) (
         map(K_TYPE, V_TYPE) *_map, 
         map_node(K_TYPE, V_TYPE) *node);
 
-#define map_node_copy(K, E) TOKENPASTE4(K, _, E, _map_node_copy)
+#define map_node_copy(K, E) PASTE4(K, _, E, _map_node_copy)
 void 
 map_node_copy(K_TYPE, V_TYPE) (
         map(K_TYPE, V_TYPE) *_map, 
         map_node(K_TYPE, V_TYPE) *lhs,
         map_node(K_TYPE, V_TYPE) *rhs);
 
-#define map_resize(K, E) TOKENPASTE4(K, _, E, _map_resize)
+#define map_resize(K, E) PASTE4(K, _, E, _map_resize)
 bool 
 map_resize(K_TYPE, V_TYPE) (
         map(K_TYPE, V_TYPE) *_map, 
         const size_t new_cap);
 
-#define map_insert_or_assign(K, E) TOKENPASTE4(K, _, E, _map_insert_or_assign)
+#define map_insert_or_assign(K, E) PASTE4(K, _, E, _map_insert_or_assign)
 bool 
 map_insert_or_assign(K_TYPE, V_TYPE) (
         map(K_TYPE, V_TYPE) *_map, 
         K_TYPE _key, 
         V_TYPE _value);
 
-#define map_insert(K, E) TOKENPASTE4(K, _, E, _map_insert)
+#define map_insert(K, E) PASTE4(K, _, E, _map_insert)
 bool 
 map_insert(K_TYPE, V_TYPE) (
         map(K_TYPE, V_TYPE) *_map, 
         K_TYPE _key, V_TYPE _value);
 
-#define map_at(K, E) TOKENPASTE4(K, _, E, _map_at)
+#define map_at(K, E) PASTE4(K, _, E, _map_at)
 bool 
 map_at(K_TYPE, V_TYPE) (
         map(K_TYPE, V_TYPE) *_map, 
         K_TYPE _key, V_TYPE *value_ret_value);
 
-#define map_contains(K, E) TOKENPASTE4(K, _, E, _map_contains)
+#define map_contains(K, E) PASTE4(K, _, E, _map_contains)
 bool 
 map_contains(K_TYPE, V_TYPE) (
         map(K_TYPE, V_TYPE) *_map, 
         K_TYPE _key);
 
-#define map_count(K, E) TOKENPASTE4(K, _, E, _map_count)
+#define map_count(K, E) PASTE4(K, _, E, _map_count)
 size_t 
 map_count(K_TYPE, V_TYPE) (
         map(K_TYPE, V_TYPE) *_map, 
         K_TYPE _key);
 
-#define map_find(K, E) TOKENPASTE4(K, _, E, _map_find)
+#define map_find(K, E) PASTE4(K, _, E, _map_find)
 map_node(K_TYPE, V_TYPE) * 
 map_find(K_TYPE, V_TYPE) (
         map(K_TYPE, V_TYPE) *_map, 
         K_TYPE _key);
 
-#define map_remove(K, E) TOKENPASTE4(K, _, E, _map_remove)
+#define map_remove(K, E) PASTE4(K, _, E, _map_remove)
 bool 
 map_remove(K_TYPE, V_TYPE) (
         map(K_TYPE, V_TYPE) *_map, 
         K_TYPE _key);
 
-#define _key_init(set, keyptr)     \
-    if ((set)->key_init)           \
-        (set)->key_init((keyptr));
+#define _key_init(map, keyptr)     \
+    if ((map)->key_init)           \
+        (map)->key_init((keyptr));
 
-#define _key_free(set, keyptr)     \
-    if ((set)->key_free)           \
-        (set)->key_free((keyptr));
+#define _key_free(map, keyptr)     \
+    if ((map)->key_free)           \
+        (map)->key_free((keyptr));
 
-#define _key_copy(set, keyptr, _key)       \
-    if ((set)->key_copy)                   \
-        (set)->key_copy((keyptr), (_key)); \
+#define _key_copy(map, keyptr, _key)       \
+    if ((map)->key_copy)                   \
+        (map)->key_copy((keyptr), (_key)); \
     else                                   \
         *(keyptr) = (_key);
 
-#define _key_equals(set, lhs, rhs) ((set)->key_equals((lhs), (rhs)))
-#define _key_compare(set, lhs, rhs) ((set)->key_compare((lhs), (rhs)))
+#define _key_equals(map, lhs, rhs) ((map)->key_equals((lhs), (rhs)))
+#define _key_compare(map, lhs, rhs) ((map)->key_compare((lhs), (rhs)))
 
-#define _value_init(set, valueptr)    \
-    if ((set)->value_init)            \
-        (set)->value_init((valueptr));
+#define _value_init(map, valueptr)    \
+    if ((map)->value_init)            \
+        (map)->value_init((valueptr));
 
-#define _value_free(set, valueptr)    \
-    if ((set)->value_free)            \
-        (set)->value_free((valueptr));
+#define _value_free(map, valueptr)    \
+    if ((map)->value_free)            \
+        (map)->value_free((valueptr));
 
-#define _value_copy(set, valueptr, _value)       \
-    if ((set)->value_copy)                       \
-        (set)->value_copy((valueptr), (_value)); \
+#define _value_copy(map, valueptr, _value)       \
+    if ((map)->value_copy)                       \
+        (map)->value_copy((valueptr), (_value)); \
     else                                         \
         *(valueptr) = (_value);
 
-bool 
+void 
 map_init(K_TYPE, V_TYPE) (map(K_TYPE, V_TYPE) *_map) {
     _map->size = 0;
     _map->capacity = INITIAL_MAP_CAP;
 
     _map->buckets = (map_node(K_TYPE, V_TYPE) **) malloc(_map->capacity * sizeof(map_node(K_TYPE, V_TYPE) *));
-    if (!_map->buckets) return false;
+    if (!_map->buckets) return;
     for (size_t i = 0; i < _map->capacity; ++i) _map->buckets[i] = NULL;
 
     _map->key_init = NULL;
@@ -174,8 +171,6 @@ map_init(K_TYPE, V_TYPE) (map(K_TYPE, V_TYPE) *_map) {
     _map->value_init = NULL;
     _map->value_free = NULL;
     _map->value_copy = NULL;
-
-    return true;
 }
 
 void map_node_init(K_TYPE, V_TYPE) (
@@ -261,37 +256,21 @@ map_insert_or_assign(K_TYPE, V_TYPE) (
         return true;
     }
 
-    map_node(K_TYPE, V_TYPE) **bucketptrptr = &(_map->buckets[bucket]);
+    map_node(K_TYPE, V_TYPE) *bucketptr = _map->buckets[bucket];
     do {
-        if (_key_equals(_map, (*bucketptrptr)->key, _key)) {
-            _value_free(_map, &((*bucketptrptr)->value))
-            _value_copy(_map, &((*bucketptrptr)->value), _value)
+        if (_key_equals(_map, bucketptr->key, _key)) {
+            _value_free(_map, &(bucketptr->value))
+            _value_copy(_map, &(bucketptr->value), _value)
             return true;
         }
-    } while ( *(bucketptrptr = &((*bucketptrptr)->next)) );
+    } while ( (bucketptr = bucketptr->next) );
 
-    *bucketptrptr = (map_node(K_TYPE, V_TYPE) *) malloc(sizeof(map_node(K_TYPE, V_TYPE)));
-    if ( !(*bucketptrptr) ) return false;
+    bucketptr = (map_node(K_TYPE, V_TYPE) *) malloc(sizeof(map_node(K_TYPE, V_TYPE)));
+    if ( !(bucketptr) ) return false;
 
-    map_node_init(K_TYPE, V_TYPE)(_map, *bucketptrptr, _key, _value);
+    map_node_init(K_TYPE, V_TYPE)(_map, bucketptr, _key, _value);
     _map->size++;
     return true;
-
-//    map_node(K_TYPE, V_TYPE) *bucketptr = _map->buckets[bucket];
-//    do {
-//        if (_key_equals(_map, bucketptr->key, _key)) {
-//            bucketptr->value = _value;
-//            return true;
-//        }
-//        bucketptr = bucketptr->next;
-//    } while (bucketptr);
-//
-//    bucketptr->next = (map_node(K_TYPE, V_TYPE) *) malloc(sizeof(map_node(K_TYPE, V_TYPE)));
-//    if (bucketptr->next == NULL) return false;
-//
-//    map_node_init(K_TYPE, V_TYPE)(_map, bucketptr->next, _key, _value);
-//    _map->size++;
-//    return true;
 }
 
 bool 
@@ -402,21 +381,21 @@ map_remove(K_TYPE, V_TYPE) (
     const unsigned long bucket = _map->key_hash(_key) % _map->capacity;
     if (!_map->buckets[bucket]) return false;
 
-    map_node(K_TYPE, V_TYPE) **bucketptrptr = &(_map->buckets[bucket]);
+    map_node(K_TYPE, V_TYPE) *bucketptr = _map->buckets[bucket];
     do {
-        if (_key_equals(_map, (*bucketptrptr)->key, _key)) {
-            if ( (*bucketptrptr)->next ) {
-                map_node(K_TYPE, V_TYPE) *temp = (*bucketptrptr)->next;
-                map_node_free_no_recurse(K_TYPE, V_TYPE)(_map, *bucketptrptr);
-                *bucketptrptr = temp;
+        if (_key_equals(_map, bucketptr->key, _key)) {
+            if ( bucketptr->next ) {
+                map_node(K_TYPE, V_TYPE) *temp = bucketptr->next;
+                map_node_free_no_recurse(K_TYPE, V_TYPE)(_map, bucketptr);
+                bucketptr = temp;
             } else {
-                map_node_free(K_TYPE, V_TYPE)(_map, *bucketptrptr);
-                *bucketptrptr = NULL;
+                map_node_free(K_TYPE, V_TYPE)(_map, bucketptr);
+                bucketptr = NULL;
             }
             _map->size++;
             return true;
         }
-    } while ( *(bucketptrptr = &((*bucketptrptr)->next)) );
+    } while ( (bucketptr = bucketptr->next) );
 
     return false;
 }
@@ -430,5 +409,3 @@ map_remove(K_TYPE, V_TYPE) (
 #undef _value_init
 #undef _value_free
 #undef _value_copy
-#undef _value_compare
-#undef _value_equals

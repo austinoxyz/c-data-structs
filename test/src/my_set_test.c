@@ -1,74 +1,66 @@
-#include "util/test.h"
+#include <stdio.h>
 
-#include <assert.h>
-#include <time.h>
+#include "my_string.h"
 
-#define K_TYPE int
-#include "my_set.h"
-#undef K_TYPE
+#define TYPE int
+#include "my_set_test.h"
+#undef TYPE
 
-unsigned long int_hash(const int n) {
-    return (unsigned long) n;
-}
+#define TYPE string
+#include "my_set_test.h"
+#undef TYPE
 
 bool int_equals(int lhs, int rhs) { return lhs == rhs; }
+int int_compare(int lhs, int rhs) { return lhs - rhs; }
+unsigned long int_hash(int n) { return (unsigned long) n; }
 
-#define _new_int_set(name)        \
-    set(int) name;                \
-    set_init(int)(&name);         \
-    name.key_hash = int_hash;     \
-    name.key_equals = int_equals; \
+// prepares a buffer of 16 ints to be inserted into set where
+// 1. range of keys is [0...16)
+void setup_for_int(void) {
+    size_t n_keys = INITIAL_SET_CAP;
 
-void simple_test() {
-    _new_int_set(_set)
+    int *data = (int *) malloc(n_keys * sizeof(int));
+    for (int i = 0; i < (int) n_keys; ++i) data[i] = i;
 
-    bool success;
+    set_data(int) = data;
+    set_data_size(int) = n_keys;
 
-    success = set_insert(int)(&_set, 4);
-    assert(success);
-
-    success = set_insert(int)(&_set, 36);
-    assert(success);
-
-    success = set_insert(int)(&_set, 68);
-    assert(success);
-
-    success = set_insert(int)(&_set, 4);
-    assert(success);
-
-    success = set_contains(int)(&_set, 4);
-    assert(success);
-
-    success = set_erase(int)(&_set, 36);
-    assert(success);
-
-    success = set_contains(int)(&_set, 36);
-    assert(!success);
-
-    success = set_insert(int)(&_set, 100);
-    assert(success);
-
-    set_free(int)(&_set);
+    g_equals_func(int) = int_equals;
+    g_compare_func(int) = int_compare;
+    g_hash_func(int) = int_hash;
 }
 
-void stress_test() {
-    _new_int_set(_set)
+void setup_for_string(void) {
+    size_t n_keys = INITIAL_SET_CAP;
 
-    bool success;
-    for (int i = 0; i < 100000; ++i) {
-        success = set_insert(int)(&_set, i);
-        assert(success);
-    }
+    string *data = (string *) malloc(n_keys * sizeof(string));
+    for (size_t i = 0; i < n_keys; ++i)
+        string_init_from_cstr(&data[i], rand_cstr(16));
 
-    success = set_contains(int)(&_set, 10000);
-    assert(success);
-    success = set_contains(int)(&_set, 99999);
-    assert(success);
-    success = set_contains(int)(&_set, 100000);
-    assert(!success);
+    set_data(string) = data;
+    set_data_size(string) = n_keys;
+
+    g_init_func(string) = string_init_no_return;
+    g_free_func(string) = string_free;
+    g_copy_func(string) = string_copy;
+    g_equals_func(string) = string_equals;
+    g_compare_func(string) = string_compare;
+    g_hash_func(string) = string_hash;
+}
+
+void cleanup(void) {
+    free(set_data(int));
+    for (size_t i = 0; i < set_data_size(string); ++i)
+        string_free( &set_data(string)[i] );
+    free(set_data(string));
 }
 
 int main(void) {
-    time_function(simple_test);
-    time_function(stress_test);
+#if 1
+#endif
+    setup_for_int();
+    run_tests_for(int)();
+    setup_for_string();
+    run_tests_for(string)();
+
 }
